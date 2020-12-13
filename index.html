@@ -10,14 +10,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <!-- styles -->
-        <link rel="stylesheet" href="libs/css/bootstrap.min.css">
+        <link rel="icon" href="favicon.png">
         <link rel="stylesheet" href="libs/css/mystyles.css">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+        <link rel="stylesheet" href="libs/css/bootstrap.min.css">
     </head>
 
 
 
-    <body  onload="getLocation()">
+
+    <body>
         <header>
             <div>
                 <span>Choose a country for more information:</span>
@@ -272,6 +274,7 @@
                     <option value="ZM">Zambia</option>
                     <option value="ZW">Zimbabwe</option>
                 </select>
+                <input type="submit" value="Let's Go!" id="btnRun">
             </div>
             
         </header>
@@ -281,7 +284,7 @@
         </main>
 
 
-        <!-- <p id="demo"></p> -->
+        <p id="demo"></p>
 
 
 
@@ -293,6 +296,7 @@
         <div id="preloader"></div>
         <!-- scripts -->
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+        <script src="libs/js/countryBorders.geo.js"></script>
         <script src="libs/js/jquery-3.5.1.min.js"></script>
         <script src="libs/js/myscript.js"></script>
     </body>
