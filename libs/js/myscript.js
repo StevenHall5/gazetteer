@@ -24,40 +24,43 @@ L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo( map );
 
+
+
 // Ajax
 
-$('#btnRun').click(function() {
-	
+function popList() {	
 
 	$.ajax({
 		url: "libs/php/getInfo.php",
 		type: 'POST',
 		dataType: 'json',
-		data: {
-            // iso_a2: "GB"
-        },
+
 		success: function(result) {
 
 			console.log(result);
+			country = result.data.currency;
+			// console.log(country);
 
 			if (result.status.name == "ok") {
 
-				// $('#selection').html("hi");
-				// $('#demo').html(result['data']);
-				// $('#txtLongitude1').html(result['data']['lng']);
-				// $('#txtTimezone1').html(result['data']['timezoneId']);
+				$(country).each(function() {
+					$(countrySel).append($("<option>").attr('value', this.code).text(this.name));
+				});
+
+				$('#btnRun').click(function() {
+					console.log($(countrySel).val());
+				});
 
 			}
 		
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log("error");
-			console.log(result['data']);
 		}
 	}); 
 
+};
 
-});
 
 
 

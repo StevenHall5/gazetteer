@@ -21,19 +21,15 @@
 
 
 
-    <body>
-    <!-- <body onload="getLocation()"> -->
+    <!-- <body> -->
+    <body onload="popList()">
         <header>
-            <div id="selection">
-                <label>Choose a country for more information:</label>
-                
-                    <select>
-                        <option value="AF">Afghanistan</option>                        
-                    </select>
+                <div id="selection">
+                    <label>Choose a country for more information:</label>
+                    <select id="countrySel" style="display: inline;"></select>
                     <input type="submit" value="Let's Go!" id="btnRun">
-                
-            </div>
-            
+                    
+                </div>
         </header>
 
         <main>
@@ -41,7 +37,8 @@
         </main>
 
 
-        <p id="demo"></p>
+        <!-- <p id="demo"></p> -->
+        
 
 
 
