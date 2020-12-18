@@ -1,18 +1,26 @@
 // navigator.geolocation for current user location
-// var x = document.getElementById("demo");
+var a = 0;
+var b = 0;
 
-// function getLocation() {
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(showPosition);
-//   } else { 
-//     x.innerHTML = "Geolocation is not supported by this browser.";
-//   }
-// }
+function getLocation() {
+  	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+  	} else { 
+    	console.log("Geolocation is not supported by this browser.");
+  	}
+}
 
-// function showPosition(position) {
-//   x.innerHTML = "Latitude: " + position.coords.latitude + 
-//   "<br>Longitude: " + position.coords.longitude;
-// }
+var showPosition = function (position) {
+	// console.log(position);
+	  a = position.coords.latitude;
+	  b = position.coords.longitude;
+	// console.log(a);
+	// console.log(b);
+	
+}
+
+// console.log(a);
+// console.log(b);
 
 
 // initialise map
@@ -37,9 +45,12 @@ function popList() {
 
 		success: function(result) {
 
-			console.log(result);
-			country = result.data.currency;
+			// console.log(result);
+			var country = result.data.currency;
+			// var countryData = result.test.features;
+
 			// console.log(country);
+			// console.log(countryData);
 
 			if (result.status.name == "ok") {
 
@@ -48,7 +59,62 @@ function popList() {
 				});
 
 				$('#btnRun').click(function() {
-					console.log($(countrySel).val());
+					var currCountry = $(countrySel).val();
+					console.log(currCountry);
+
+					// Object.keys(result).forEach(function (item) {
+					// 	console.log(item); // key
+					// 	console.log(result[item]); // value
+					// });
+
+
+					result.data.currency.forEach(element => {
+						// L.geoJson(element.geo, {style: styleOff}).addTo(map);
+						if (element.code.indexOf(currCountry) !== -1) {
+							console.log(element);
+							L.geoJson(element.geo, {style: styleOn}).addTo(map);
+						}	
+					});
+
+					function styleOff(feature) {
+					    return {
+					        weight: 0,
+					        opacity: 0,
+					        color: 'red',
+					        dashArray: '3',
+					        fillOpacity: 0
+					    };
+					}
+
+					function styleOn(feature) {
+					    return {
+					        weight: 5,
+					        opacity: 1,
+					        color: 'black',
+					        dashArray: '3',
+					        fillOpacity: 0
+					    };
+					}
+
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					// getLocation();
+					// var filteredObj = country.find(function(item, i){
+					// 	if(item.name === "DZ"){
+					// 	  index = i;
+					// 	  return i;
+					// 	}
+					//   });
+					// console.log(filteredObj);
+					
 				});
 
 			}

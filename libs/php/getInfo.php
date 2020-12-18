@@ -12,7 +12,9 @@
 
 		$temp['code'] = $feature["properties"]['iso_a2'];
 
-		$temp['name'] = $feature["properties"]['name'];
+    $temp['name'] = $feature["properties"]['name'];
+    
+    $temp['geo'] = $feature['geometry'];
 
 		array_push($country, $temp);
 
@@ -31,6 +33,7 @@
     $output['data']['weather'] = $country;
     $output['data']['currency'] = $country;
     $output['data']['news'] = $country;
+
 
     header('Content-Type: application/json; charset=UTF-8');
 
