@@ -32,7 +32,15 @@ L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo( map );
 
-
+function styleOn(feature) {
+	return {
+		weight: 3,
+		opacity: 1,
+		color: 'black',
+		dashArray: '3',
+		fillOpacity: 0
+	};
+}
 
 // Ajax
 
@@ -64,34 +72,72 @@ function popList() {
 						marker.clearLayers();
 					}
 
-					//Attached border to current country
-					result.data.forEach(element => {
+
+					//Establish maximum boundaries
+					var mostS = 90;
+					var mostN = -90;
+					var mostE = -180;
+					var mostW = 180;
+
+					//Attached border to current country and fill screen
+					country.forEach(element => {
 						if (element.code.indexOf(currCountry) !== -1) {
 							console.log(element);
 							marker = L.geoJson(element.geo, {style: styleOn}).addTo(map);
-						}	
+
+							if (element.geo.coordinates[0][0][0][0]) { //for countries with multiple landmasses
+								element.geo.coordinates.forEach(mass => {
+									mass[0].forEach(coord => {
+									
+										if (coord[1] < mostS) {
+											mostS = coord[1];
+										}
+										
+										if (coord[1] > mostN) {
+											mostN = coord[1];
+										}
+
+										if (coord[0] < mostW) {
+											mostW = coord[0];
+										}
+
+										if (coord[0] > mostE) {
+											mostE = coord[0];
+										}
+
+									});
+										
+								});
+
+							} else { //for countries with a single landmass
+								element.geo.coordinates[0].forEach(coord => {
+
+									if (coord[1] < mostS) {
+										mostS = coord[1];
+									}
+									
+									if (coord[1] > mostN) {
+										mostN = coord[1];
+									}
+
+									if (coord[0] < mostW) {
+										mostW = coord[0];
+									}
+
+									if (coord[0] > mostE) {
+										mostE = coord[0];
+									}
+
+								});
+
+							}
+
+							map.fitBounds([[mostS, mostW], [mostN, mostE]]);
+							
+						}
+
 					});
-
-					function styleOn(feature) {
-					    return {
-					        weight: 3,
-					        opacity: 1,
-					        color: 'black',
-					        dashArray: '3',
-					        fillOpacity: 0
-					    };
-					}
-
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+	
 				});
 
 			}
