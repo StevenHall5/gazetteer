@@ -45,12 +45,7 @@ function popList() {
 
 		success: function(result) {
 
-			// console.log(result);
-			var country = result.data.currency;
-			// var countryData = result.test.features;
-
-			// console.log(country);
-			// console.log(countryData);
+			var country = result.data;
 
 			if (result.status.name == "ok") {
 
@@ -58,37 +53,28 @@ function popList() {
 					$(countrySel).append($("<option>").attr('value', this.code).text(this.name));
 				});
 
+				var marker;		//Establish map layer for borders
+
 				$('#btnRun').click(function() {
 					var currCountry = $(countrySel).val();
 					console.log(currCountry);
+					
+					//clear all borders
+					if (marker !== undefined) {
+						marker.clearLayers();
+					}
 
-					// Object.keys(result).forEach(function (item) {
-					// 	console.log(item); // key
-					// 	console.log(result[item]); // value
-					// });
-
-
-					result.data.currency.forEach(element => {
-						// L.geoJson(element.geo, {style: styleOff}).addTo(map);
+					//Attached border to current country
+					result.data.forEach(element => {
 						if (element.code.indexOf(currCountry) !== -1) {
 							console.log(element);
-							L.geoJson(element.geo, {style: styleOn}).addTo(map);
+							marker = L.geoJson(element.geo, {style: styleOn}).addTo(map);
 						}	
 					});
 
-					function styleOff(feature) {
-					    return {
-					        weight: 0,
-					        opacity: 0,
-					        color: 'red',
-					        dashArray: '3',
-					        fillOpacity: 0
-					    };
-					}
-
 					function styleOn(feature) {
 					    return {
-					        weight: 5,
+					        weight: 3,
 					        opacity: 1,
 					        color: 'black',
 					        dashArray: '3',
@@ -105,15 +91,6 @@ function popList() {
 					
 					
 					
-					
-					// getLocation();
-					// var filteredObj = country.find(function(item, i){
-					// 	if(item.name === "DZ"){
-					// 	  index = i;
-					// 	  return i;
-					// 	}
-					//   });
-					// console.log(filteredObj);
 					
 				});
 
