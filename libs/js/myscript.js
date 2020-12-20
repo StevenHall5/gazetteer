@@ -61,15 +61,17 @@ function popList() {
 					$(countrySel).append($("<option>").attr('value', this.code).text(this.name));
 				});
 
-				var marker;		//Establish map layer for borders
+				var borderLayer;		//Establish map layer for borders
 
 				$('#btnRun').click(function() {
 					var currCountry = $(countrySel).val();
 					console.log(currCountry);
+
+					document.getElementById("info").style.display = "inherit";
 					
 					//clear all borders
-					if (marker !== undefined) {
-						marker.clearLayers();
+					if (borderLayer !== undefined) {
+						borderLayer.clearLayers();
 					}
 
 
@@ -83,7 +85,8 @@ function popList() {
 					country.forEach(element => {
 						if (element.code.indexOf(currCountry) !== -1) {
 							console.log(element);
-							marker = L.geoJson(element.geo, {style: styleOn}).addTo(map);
+							document.getElementById("countryName").innerHTML = element.name;
+							borderLayer = L.geoJson(element.geo, {style: styleOn}).addTo(map);
 
 							if (element.geo.coordinates[0][0][0][0]) { //for countries with multiple landmasses
 								element.geo.coordinates.forEach(mass => {
@@ -138,6 +141,33 @@ function popList() {
 
 					});
 	
+				});
+
+				$('#capitalPlus').click(function() {
+					document.getElementById("cityData").style.display = "inherit";
+
+					if (document.getElementById("toggleWord1").innerHTML === "show") {
+						document.getElementById("toggleWord1").innerHTML = "hide";
+						document.getElementById("capitalPlus").src = "libs/images/minus.png";
+					} else {
+						document.getElementById("toggleWord1").innerHTML = "show";
+						document.getElementById("capitalPlus").src = "libs/images/plus.png";
+						document.getElementById("cityData").style.display = "none";
+					}
+
+				});
+
+				$('#countryPlus').click(function() {
+					document.getElementById("countryData").style.display = "inherit";
+
+					if (document.getElementById("toggleWord2").innerHTML === "show") {
+						document.getElementById("toggleWord2").innerHTML = "hide";
+						document.getElementById("countryPlus").src = "libs/images/minus.png";
+					} else {
+						document.getElementById("toggleWord2").innerHTML = "show";
+						document.getElementById("countryPlus").src = "libs/images/plus.png";
+						document.getElementById("countryData").style.display = "none";
+					}
 				});
 
 			}
