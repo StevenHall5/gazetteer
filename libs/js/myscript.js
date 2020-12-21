@@ -42,7 +42,55 @@ function styleOn(feature) {
 	};
 }
 
+$('#capitalPlus').click(function() {
+	document.getElementById("cityData").style.display = "inherit";
+
+	if (document.getElementById("toggleWord1").innerHTML === "show") {
+		document.getElementById("toggleWord1").innerHTML = "hide";
+		document.getElementById("capitalPlus").src = "libs/images/minus.png";
+	} else {
+		document.getElementById("toggleWord1").innerHTML = "show";
+		document.getElementById("capitalPlus").src = "libs/images/plus.png";
+		document.getElementById("cityData").style.display = "none";
+	}
+
+});
+
+$('#countryPlus').click(function() {
+	document.getElementById("countryData").style.display = "inherit";
+
+	if (document.getElementById("toggleWord2").innerHTML === "show") {
+		document.getElementById("toggleWord2").innerHTML = "hide";
+		document.getElementById("countryPlus").src = "libs/images/minus.png";
+	} else {
+		document.getElementById("toggleWord2").innerHTML = "show";
+		document.getElementById("countryPlus").src = "libs/images/plus.png";
+		document.getElementById("countryData").style.display = "none";
+	}
+});
+
 // Ajax
+
+// function countryCodeNavigator() {	
+
+// 	$.ajax({
+// 		url: "libs/php/getInfo.php",
+// 		type: 'POST',
+// 		dataType: 'json',
+
+// 		success: function(result) {
+
+// 			var country = result.data;
+
+// 			if (result.status.name == "ok") {}
+		
+// 		},
+// 		error: function(jqXHR, textStatus, errorThrown) {
+// 			console.log("error");
+// 		}
+// 	}); 
+
+// };
 
 function popList() {	
 
@@ -61,9 +109,32 @@ function popList() {
 					$(countrySel).append($("<option>").attr('value', this.code).text(this.name));
 				});
 
+			}
+		
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("popList error");
+		}
+	}); 
+
+};
+
+function eventChanger() {	
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+
+		success: function(result) {
+
+			var country = result.data;
+
+			if (result.status.name == "ok") {
+
 				var borderLayer;		//Establish map layer for borders
 
-				$('#btnRun').click(function() {
+				$('select').change(function() {
 					var currCountry = $(countrySel).val();
 					console.log(currCountry);
 
@@ -143,33 +214,6 @@ function popList() {
 	
 				});
 
-				$('#capitalPlus').click(function() {
-					document.getElementById("cityData").style.display = "inherit";
-
-					if (document.getElementById("toggleWord1").innerHTML === "show") {
-						document.getElementById("toggleWord1").innerHTML = "hide";
-						document.getElementById("capitalPlus").src = "libs/images/minus.png";
-					} else {
-						document.getElementById("toggleWord1").innerHTML = "show";
-						document.getElementById("capitalPlus").src = "libs/images/plus.png";
-						document.getElementById("cityData").style.display = "none";
-					}
-
-				});
-
-				$('#countryPlus').click(function() {
-					document.getElementById("countryData").style.display = "inherit";
-
-					if (document.getElementById("toggleWord2").innerHTML === "show") {
-						document.getElementById("toggleWord2").innerHTML = "hide";
-						document.getElementById("countryPlus").src = "libs/images/minus.png";
-					} else {
-						document.getElementById("toggleWord2").innerHTML = "show";
-						document.getElementById("countryPlus").src = "libs/images/plus.png";
-						document.getElementById("countryData").style.display = "none";
-					}
-				});
-
 			}
 		
 		},
@@ -179,6 +223,8 @@ function popList() {
 	}); 
 
 };
+
+
 
 
 
