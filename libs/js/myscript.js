@@ -140,7 +140,7 @@ function eventChanger() {
 					var currCountry = $(countrySel).val();
 					console.log(currCountry);
 
-					document.getElementById("info").style.display = "inherit";
+					// document.getElementById("info").style.display = "inherit";
 					
 					//clear all borders
 					if (borderLayer !== undefined) {
@@ -244,7 +244,7 @@ function eventChanger() {
 
 // preloader
 
-$(window).on('load', function () {
+$(document).ready(function () {
     if ($('#preloader').length) {
         $('#preloader').delay(100).fadeOut('slow', function () {
             $(this).remove();
