@@ -1,28 +1,3 @@
-// navigator.geolocation for current user location
-var a = 0;
-var b = 0;
-
-function getLocation() {
-  	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(showPosition);
-  	} else { 
-    	console.log("Geolocation is not supported by this browser.");
-  	}
-}
-
-var showPosition = function (position) {
-	// console.log(position);
-	  a = position.coords.latitude;
-	  b = position.coords.longitude;
-	// console.log(a);
-	// console.log(b);
-	
-}
-
-// console.log(a);
-// console.log(b);
-
-
 // initialise map
 
 var map = L.map( 'mapid');
@@ -41,6 +16,8 @@ function styleOn(feature) {
 		fillOpacity: 0
 	};
 }
+
+//Plus/Minus buttons in Info Box
 
 $('#capitalPlus').click(function() {
 	document.getElementById("cityData").style.display = "inherit";
@@ -71,27 +48,6 @@ $('#countryPlus').click(function() {
 
 // Ajax
 
-// function countryCodeNavigator() {	
-
-// 	$.ajax({
-// 		url: "libs/php/getInfo.php",
-// 		type: 'POST',
-// 		dataType: 'json',
-
-// 		success: function(result) {
-
-// 			var country = result.data;
-
-// 			if (result.status.name == "ok") {}
-		
-// 		},
-// 		error: function(jqXHR, textStatus, errorThrown) {
-// 			console.log("error");
-// 		}
-// 	}); 
-
-// };
-
 function popList() {	
 
 	$.ajax({
@@ -101,7 +57,7 @@ function popList() {
 
 		success: function(result) {
 
-			var country = result.data;
+			var country = result.data.borders;
 
 			if (result.status.name == "ok") {
 
@@ -119,6 +75,52 @@ function popList() {
 
 };
 
+// launch site at current user location
+
+function getLocation() {	
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		
+		success: function(result) {
+
+			var info = result.data.countryInfo;
+
+			if (result.status.name == "ok") {
+
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(showPosition);
+				} else { 
+					console.log("Geolocation is not supported by this browser.");
+				}
+			}
+
+			function showPosition(position) {
+				var lat = position.coords.latitude;
+				var long = position.coords.longitude;
+				
+				info.geonames.forEach(element => {
+					if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
+						var myCountry = element.countryCode;
+						$("#countrySel").val(myCountry).change();
+					}
+					
+				});
+				
+			}
+					
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("getLocation error");
+		}
+	}); 
+
+};
+
+// On change of country
+
 function eventChanger() {	
 
 	$.ajax({
@@ -128,7 +130,7 @@ function eventChanger() {
 
 		success: function(result) {
 
-			var country = result.data;
+			var country = result.data.borders;
 
 			if (result.status.name == "ok") {
 
@@ -144,7 +146,6 @@ function eventChanger() {
 					if (borderLayer !== undefined) {
 						borderLayer.clearLayers();
 					}
-
 
 					//Establish maximum boundaries
 					var mostS = 90;
@@ -218,7 +219,7 @@ function eventChanger() {
 		
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			console.log("error");
+			console.log("eventChanger error");
 		}
 	}); 
 
