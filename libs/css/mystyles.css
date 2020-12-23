@@ -38,7 +38,7 @@ main {
 }
 
 #info {
-    display: none;
+    display:none;
     position: absolute;
     background-color: white;
     height: auto;
@@ -73,6 +73,12 @@ main {
 #cityData, #countryData {
     display:none;
 }
+
+/* #modbutt {
+    position: absolute;
+    top: 400px;
+    right: 100px;
+} */
 
 
 

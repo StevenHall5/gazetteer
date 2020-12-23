@@ -5,7 +5,15 @@ map.locate({setView: true, maxZoom: 5});
 
 L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-}).addTo( map );
+}).addTo(map);
+
+L.easyButton('<img width="100%" height="auto" src="libs/images/info.png">', function(){
+	if (document.getElementById("info").style.display === "none") {
+		document.getElementById("info").style.display = "block";
+	} else {
+		document.getElementById("info").style.display = "none";
+	}
+}).addTo(map);
 
 function styleOn(feature) {
 	return {
@@ -16,6 +24,10 @@ function styleOn(feature) {
 		fillOpacity: 0
 	};
 }
+
+// $('#myModal').on('shown.bs.modal', function () {
+// 	$('#myInput').trigger('focus')
+//   })
 
 //Plus/Minus buttons in Info Box
 
@@ -90,26 +102,33 @@ function getLocation() {
 
 			if (result.status.name == "ok") {
 
+				
+
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(showPosition);
 				} else { 
 					console.log("Geolocation is not supported by this browser.");
 				}
+
+				function showPosition(position) {
+					var lat = position.coords.latitude;
+					var long = position.coords.longitude;
+					
+					info.geonames.forEach(element => {
+						if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
+							var myCountry = element.countryCode;
+							setTimeout(function() {$("#countrySel").val(myCountry).change();}, 200);	
+						}
+						
+					});
+					
+				}
+
+
+
 			}
 
-			function showPosition(position) {
-				var lat = position.coords.latitude;
-				var long = position.coords.longitude;
-				
-				info.geonames.forEach(element => {
-					if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
-						var myCountry = element.countryCode;
-						$("#countrySel").val(myCountry).change();
-					}
-					
-				});
-				
-			}
+			
 					
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -134,13 +153,15 @@ function eventChanger() {
 
 			if (result.status.name == "ok") {
 
+				// document.getElementById("info").style.display = "none";
+
 				var borderLayer;		//Establish map layer for borders
 
 				$('select').change(function() {
 					var currCountry = $(countrySel).val();
 					console.log(currCountry);
 
-					// document.getElementById("info").style.display = "inherit";
+					document.getElementById("info").style.display = "none";
 					
 					//clear all borders
 					if (borderLayer !== undefined) {
