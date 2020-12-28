@@ -89,52 +89,76 @@ function popList() {
 
 // launch site at current user location
 
-function getLocation() {	
+function getLocation() {
 
-	$.ajax({
-		url: "libs/php/getInfo.php",
-		type: 'POST',
-		dataType: 'json',
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+	} else { 
+		console.log("Geolocation is not supported by this browser.");
 		
-		success: function(result) {
+	}
+	
+	function showPosition(position) {
+		var lat = position.coords.latitude;
+		var long = position.coords.longitude;
 
-			var info = result.data.countryInfo;
-
-			if (result.status.name == "ok") {
-
-				
-
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(showPosition);
-				} else { 
-					console.log("Geolocation is not supported by this browser.");
-				}
-
-				function showPosition(position) {
-					var lat = position.coords.latitude;
-					var long = position.coords.longitude;
-					
-					info.geonames.forEach(element => {
-						if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
-							var myCountry = element.countryCode;
-							setTimeout(function() {$("#countrySel").val(myCountry).change();}, 200);	
-						}
-						
-					});
-					
-				}
-
-
-
-			}
-
+		$.ajax({
+			url: "libs/php/getInfo.php",
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				myLat: lat,
+				myLong: long
+			},
 			
+			success: function(result) {
+	
+				var info = result.data.countryInfo;
+	
+				if (result.status.name == "ok") {
+	
+					// info.geonames.forEach(element => {
+					// 	if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
+					// 		var myCountry = element.countryCode;
+					// 		setTimeout(function() {$("#countrySel").val(myCountry).change();}, 200);	
+					// 	}
+						
+					// });
+
+					console.log(info);
+	
 					
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log("getLocation error");
-		}
-	}); 
+	
+					
+	
+	
+	
+				}
+	
+				
+						
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log("getLocation error");
+			}
+		}); 
+
+
+
+
+
+
+
+
+		
+		
+		
+	}
+
+
+
+
+	
 
 };
 
@@ -153,13 +177,10 @@ function eventChanger() {
 
 			if (result.status.name == "ok") {
 
-				// document.getElementById("info").style.display = "none";
-
 				var borderLayer;		//Establish map layer for borders
 
 				$('select').change(function() {
 					var currCountry = $(countrySel).val();
-					console.log(currCountry);
 
 					document.getElementById("info").style.display = "none";
 					
