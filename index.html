@@ -22,7 +22,7 @@
 
 
     <!-- <body> -->
-    <body onload="popList(); getLocation(); eventChanger();">
+    <body onload="popList(); getLocation();">
         
         <header>
                 <div id="selection">
@@ -35,28 +35,32 @@
             <div id="info">
                 <h4 id="countryName">Capital City name</h4>
                 <div>
-                    <p>Click to <span id="toggleWord1">show</span> information about the capital city: <img src="libs/images/plus.png" class="toggleBtn" id="capitalPlus"></p>
+                    <p id="click1">Click to <span id="toggleWord1">show</span> information about the capital city: <img src="libs/images/plus.png" class="toggleBtn" id="capitalPlus"></p>
                 </div>
                 <div id="cityData">
-                    <p>Capital City name:</p>
-                    <p>Capital City weather:</p>
-                    <p>Capital City forecast:</p>
-                    <p>Capital City timezone:</p>
-                    <p>Capital City UV index:</p>
+                    <p>Name: <span id="capName"></span></p>
+                    <p>Weather: <span id="capWeather"></span> <img id="capWeatherImg" src=""></p>
+                    <p>Forecast: <span id="capForecast"></span></p>
+                    <p>Timezone: <span id="capTZ"></span></p>
+                    <p>UV index: <span id="capUV"></span></p>
+                    <p>Location: <span id="capLat"></span>, <span id="capLong"></span></p>
                 </div>
                 <div>
-                    <p>Click to <span id="toggleWord2">show</span> information about this country: <img src="libs/images/plus.png" class="toggleBtn" id="countryPlus"></p>
+                    <p id="click2">Click to <span id="toggleWord2">show</span> information about this country: <img src="libs/images/plus.png" class="toggleBtn" id="countryPlus"></p>
                 </div>
                 <div id="countryData">
-                    <p>Population:</p>
-                    <p>Currency:</p>
-                    <p>Exchange rate:</p>
-                    <p>Wiki link:</p>
-                    <p>Largest earthquake:</p>
-                    <p>Language(s):</p>
-                    <p>Calling code:</p>
-                    <p>Religion(s):</p>
-                    <p>Neighbouring countries:</p>
+                    <p>Population: <span id="pop"></span></p>
+                    <p>Area in km<sup>2</sup>: <span id="area"></span></p>
+                    <p>Continent: <span id="continent"></span></p>
+                    <p>Currency: <span id="currency"></span></p>
+                    <p>Exchange rate: <span id="exRate"></span></p>
+                    <p>Driving side: <span id="drive"></span></p>
+                    <p>Wiki link: <span id="wiki"></span></p>
+                    <!-- <p>Largest earthquake: <span id="earthQ"></span></p> -->
+                    <p>Language(s): <span id="lang"></span></p>
+                    <p>Calling code: <span id="call"></span></p>
+                    <p>Religion(s): <span id="relig"></span></p>
+                    <p>Neighbouring countries: <ul id="neigh"></ul></p>
                 </div>
             </div>
         </main>

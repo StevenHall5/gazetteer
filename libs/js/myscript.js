@@ -1,3 +1,11 @@
+var lat = null;
+var long = null;
+var currCountry = "AS";
+var borderLayer;		//Establish map layer for borders
+var capital = null;
+var coord1 = 0;
+var coord2 = 0;
+
 // initialise map
 
 var map = L.map( 'mapid');
@@ -20,7 +28,7 @@ function styleOn(feature) {
 		weight: 3,
 		opacity: 1,
 		color: 'black',
-		dashArray: '3',
+		dashArray: '0',
 		fillOpacity: 0
 	};
 }
@@ -31,8 +39,8 @@ function styleOn(feature) {
 
 //Plus/Minus buttons in Info Box
 
-$('#capitalPlus').click(function() {
-	document.getElementById("cityData").style.display = "inherit";
+$('#click1').click(function() {
+	document.getElementById("cityData").style.display = "block";
 
 	if (document.getElementById("toggleWord1").innerHTML === "show") {
 		document.getElementById("toggleWord1").innerHTML = "hide";
@@ -45,8 +53,8 @@ $('#capitalPlus').click(function() {
 
 });
 
-$('#countryPlus').click(function() {
-	document.getElementById("countryData").style.display = "inherit";
+$('#click2').click(function() {
+	document.getElementById("countryData").style.display = "block";
 
 	if (document.getElementById("toggleWord2").innerHTML === "show") {
 		document.getElementById("toggleWord2").innerHTML = "hide";
@@ -66,6 +74,14 @@ function popList() {
 		url: "libs/php/getInfo.php",
 		type: 'POST',
 		dataType: 'json',
+		data: {
+			myLat: lat,
+			myLong: long,
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2
+		},
 
 		success: function(result) {
 
@@ -99,8 +115,9 @@ function getLocation() {
 	}
 	
 	function showPosition(position) {
-		var lat = position.coords.latitude;
-		var long = position.coords.longitude;
+		lat = position.coords.latitude;
+		long = position.coords.longitude;
+		// console.log(position);
 
 		$.ajax({
 			url: "libs/php/getInfo.php",
@@ -108,160 +125,178 @@ function getLocation() {
 			dataType: 'json',
 			data: {
 				myLat: lat,
-				myLong: long
+				myLong: long,
+				country: currCountry,
+				capital: capital,
+				coord1: coord1,
+				coord2: coord2
 			},
 			
 			success: function(result) {
 	
-				var info = result.data.countryInfo;
+				var code = result.data.countryCode;
 	
 				if (result.status.name == "ok") {
-	
-					// info.geonames.forEach(element => {
-					// 	if ((element.north >= lat) && (element.south <= lat) && (element.east >= long) && (element.west <= long)) {
-					// 		var myCountry = element.countryCode;
-					// 		setTimeout(function() {$("#countrySel").val(myCountry).change();}, 200);	
-					// 	}
-						
-					// });
 
-					console.log(info);
-	
-					
-	
-					
-	
-	
+					document.getElementById("info").style.display = "none";
+
+					$("#countrySel").val(code.countryCode).change();
 	
 				}
-	
-				
-						
+					
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log("getLocation error");
 			}
-		}); 
-
-
-
-
-
-
-
-
-		
-		
+		}); 		
 		
 	}
-
-
-
-
-	
 
 };
 
 // On change of country
 
-function eventChanger() {	
-
+$('select').change(function() {
+	currCountry = $(countrySel).val();
+	
 	$.ajax({
 		url: "libs/php/getInfo.php",
 		type: 'POST',
 		dataType: 'json',
+		data: {
+			myLat: lat,
+			myLong: long,
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2
+		},
 
 		success: function(result) {
 
-			var country = result.data.borders;
+			var cBorders = result.data.borders;
+			var cInfo = result.data.countryInfo.geonames[0];
+			var neighbours = result.data.neighbours.geonames;
+
+			// console.log(currCountry);
+			// console.log(cInfo);
 
 			if (result.status.name == "ok") {
 
-				var borderLayer;		//Establish map layer for borders
+				// document.getElementById("info").style.display = "none";
 
-				$('select').change(function() {
-					var currCountry = $(countrySel).val();
+				cBorders.forEach(element => {
+					if (element.code.indexOf(currCountry) !== -1) {
+						map.fitBounds([[cInfo.south, cInfo.west], [cInfo.north, cInfo.east]]);
+						
 
-					document.getElementById("info").style.display = "none";
-					
-					//clear all borders
-					if (borderLayer !== undefined) {
-						borderLayer.clearLayers();
+						//clear all borders
+						if (borderLayer !== undefined) {
+							borderLayer.clearLayers();
+						}
+						//attach borders
+						borderLayer = L.geoJson(element.geo, {style: styleOn}).addTo(map);
+
 					}
 
-					//Establish maximum boundaries
-					var mostS = 90;
-					var mostN = -90;
-					var mostE = -180;
-					var mostW = 180;
-
-					//Attached border to current country and fill screen
-					country.forEach(element => {
-						if (element.code.indexOf(currCountry) !== -1) {
-							console.log(element);
-							document.getElementById("countryName").innerHTML = element.name;
-							borderLayer = L.geoJson(element.geo, {style: styleOn}).addTo(map);
-
-							if (element.geo.coordinates[0][0][0][0]) { //for countries with multiple landmasses
-								element.geo.coordinates.forEach(mass => {
-									mass[0].forEach(coord => {
-									
-										if (coord[1] < mostS) {
-											mostS = coord[1];
-										}
-										
-										if (coord[1] > mostN) {
-											mostN = coord[1];
-										}
-
-										if (coord[0] < mostW) {
-											mostW = coord[0];
-										}
-
-										if (coord[0] > mostE) {
-											mostE = coord[0];
-										}
-
-									});
-										
-								});
-
-							} else { //for countries with a single landmass
-								element.geo.coordinates[0].forEach(coord => {
-
-									if (coord[1] < mostS) {
-										mostS = coord[1];
-									}
-									
-									if (coord[1] > mostN) {
-										mostN = coord[1];
-									}
-
-									if (coord[0] < mostW) {
-										mostW = coord[0];
-									}
-
-									if (coord[0] > mostE) {
-										mostE = coord[0];
-									}
-
-								});
-
-							}
-
-							map.fitBounds([[mostS, mostW], [mostN, mostE]]);
-							
-						}
-
-					});
-	
 				});
+
+				document.getElementById("countryName").innerHTML = cInfo.countryName;
+				document.getElementById("capName").innerHTML = cInfo.capital;
+				document.getElementById("pop").innerHTML = cInfo.population;
+				document.getElementById("area").innerHTML = cInfo.areaInSqKm;
+				document.getElementById("lang").innerHTML = cInfo.languages;
+				document.getElementById("continent").innerHTML = cInfo.continentName;
+				document.getElementById("neigh").innerHTML = "";
+				neighbours.forEach(element => {
+					document.getElementById("neigh").innerHTML += '<li>' + element.countryName + '</li>';
+				});
+
+				const spaceSwap = / /gi;
+				var capStr = cInfo.capital.replace(spaceSwap, '%20') + '%20' + cInfo.countryName.replace(spaceSwap, '%20');
+				// console.log(capStr);
+				capData(capStr);		
 
 			}
 		
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log("eventChanger error");
+		}
+	}); 
+	
+});
+
+function capData(str) {	
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			myLat: lat,
+			myLong: long,
+			country: currCountry,
+			capital: str,
+			coord1: coord1,
+			coord2: coord2
+		},
+
+		success: function(result) {
+
+			var capInfo = result.data.cap.results[0];
+
+			// console.log(str);
+			console.log(capInfo);
+
+			document.getElementById("capLat").innerHTML = capInfo.geometry.lat;
+			document.getElementById("capLong").innerHTML = capInfo.geometry.lng;
+			document.getElementById("call").innerHTML = capInfo.annotations.callingcode;
+			document.getElementById("currency").innerHTML = capInfo.annotations.currency.name + ' ' + capInfo.annotations.currency.symbol;
+			document.getElementById("drive").innerHTML = capInfo.annotations.roadinfo.drive_on;
+			document.getElementById("capTZ").innerHTML = capInfo.annotations.timezone.name + ', ' + capInfo.annotations.timezone.offset_string;
+			
+			moreCapData(capInfo.geometry.lat, capInfo.geometry.lng);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("capData error");
+		}
+	}); 
+
+};
+
+function moreCapData(coord1, coord2) {	
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			myLat: lat,
+			myLong: long,
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2
+		},
+
+		success: function(result) {
+
+			var capitalWeather = result.data.weather;
+
+			console.log(coord1);
+			console.log(coord2);
+			console.log(capitalWeather);
+
+			document.getElementById("capWeatherImg").src = 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png';
+			document.getElementById("capWeather").innerHTML += 'Max temp: ' + (capitalWeather.main.temp_max - 273.15).toFixed(2) + ' &#176;C<br>';
+			document.getElementById("capWeather").innerHTML += 'Min temp: ' + (capitalWeather.main.temp_min - 273.15).toFixed(2) + ' &#176;C<br>';
+			document.getElementById("capWeather").innerHTML += 'Feels like: ' + (capitalWeather.main.feels_like - 273.15).toFixed(2) + ' &#176;C<br>';
+
+			
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("capData error");
 		}
 	}); 
 
@@ -280,15 +315,11 @@ function eventChanger() {
 
 
 
-
-
-
-
 // preloader
 
 $(document).ready(function () {
     if ($('#preloader').length) {
-        $('#preloader').delay(100).fadeOut('slow', function () {
+        $('#preloader').delay(1000).fadeOut('slow', function () {
             $(this).remove();
         });
     }
