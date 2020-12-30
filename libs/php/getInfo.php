@@ -26,22 +26,22 @@
 
     });
 
-    //first API: geonames countryCode
+    // //first API: geonames countryCode
 
-    $url='http://api.geonames.org/countryCodeJSON?lat=' . $_REQUEST['myLat'] . '&lng=' . $_REQUEST['myLong'] . '&username=davidfish';
+    // $url='http://api.geonames.org/countryCodeJSON?lat=' . $_REQUEST['myLat'] . '&lng=' . $_REQUEST['myLong'] . '&username=davidfish';
   
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_URL,$url); 
+    // $ch = curl_init();
+    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // curl_setopt($ch, CURLOPT_URL,$url); 
 
-    $result=curl_exec($ch);
+    // $result=curl_exec($ch);
 
-    curl_close($ch); 
+    // curl_close($ch); 
 
-    $countryCode = json_decode($result,true);
+    // $countryCode = json_decode($result,true);
 
-    //end of API1
+    // //end of API1
 
     //second API: geonames countryInfo
 
@@ -116,7 +116,7 @@
     $output['status']['name'] = "ok";
     $output['status']['description'] = "success";
     $output['status']['executedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-    $output['data']['countryCode'] = $countryCode;
+    // $output['data']['countryCode'] = $countryCode;
     $output['data']['countryInfo'] = $countryInfo;
     $output['data']['neighbours'] = $neighbours;
     $output['data']['cap'] = $capital;
