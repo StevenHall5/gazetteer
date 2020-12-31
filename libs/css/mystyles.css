@@ -74,12 +74,41 @@ main {
     display:none;
 }
 
-/* #modbutt {
-    position: absolute;
-    top: 400px;
-    right: 100px;
-} */
+#weath {
+    border: 10px solid black;
+}
 
+.leaflet-bar button {
+    display : inline-flex !important;
+    height: 50px !important;
+    width: 50px !important;
+    border-radius: 50% !important;
+    padding-top: 5px !important;
+}
+
+div.leaflet-bar.easy-button-container.leaflet-control {
+    border: 0px;   
+}
+
+#flag {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20%;
+    height: auto;
+}
+
+#UVBox {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid black;
+    
+}
+
+#UVPara {
+    display: inline;
+}
 
 
 

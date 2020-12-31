@@ -8,52 +8,38 @@ var coord2 = 0;
 var map = L.map( 'mapid');
 map.locate({setView: true, maxZoom: 5});
 
-L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-L.easyButton('<img width="100%" height="auto" src="libs/images/info.png">', function(){
-	if ($("#info").css("display") === "none") {
-		$("#info").css({display: "block"});
-	} else {
-		$("#info").css({display: "none"});
-	}
+
+
+var weatherButton = L.easyButton('<img src="libs/images/weather.svg">', function(){
+	$('#weatherModal').modal('show');
+}).addTo(map);
+
+L.easyButton('<img src="libs/images/info.png" width="100%">', function(){
+	$('#countryModal').modal('show');
+}).addTo(map);
+
+L.easyButton('<img src="libs/images/virus.png" width="100%">', function(){
+	$('#covidModal').modal('show');
 }).addTo(map);
 
 var borderLayer;		//Establish map layer for borders
 
-//Plus/Minus buttons in Info Box
-
-$('#click1').click(function() {
-	$("#cityData").css({display: "block"});
-
-	if ($("#toggleWord1").html() === "show") {
-		$("#toggleWord1").html("hide");
-		$("#capitalPlus").attr({src: "libs/images/minus.png"});
-	} else {
-		$("#toggleWord1").html("show");
-		$("#capitalPlus").attr({src: "libs/images/plus.png"});
-		$("#cityData").css({display: "none"});
-	}
-
-});
-
-$('#click2').click(function() {
-	$("#countryData").css({display: "block"});
-
-	if ($("#toggleWord2").html() === "show") {
-		$("#toggleWord2").html("hide");
-		$("#countryPlus").attr({src: "libs/images/minus.png"});
-	} else {
-		$("#toggleWord2").html("show");
-		$("#countryPlus").attr({src: "libs/images/plus.png"});
-		$("#countryData").css({display: "none"});
-	}
-});
+$.fn.digits = function(){ 
+    return this.each(function(){ 
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+    })
+}
 
 // Ajax
 
-function popList() {	
+function popList() {
+	
+	// $('#myModal').modal('show');
 
 	$.ajax({
 		url: "libs/php/popList.php",
@@ -148,9 +134,15 @@ $('select').change(function() {
 			var cBorders = result.data.borders;
 			var cInfo = result.data.countryInfo.geonames[0];
 			var neighbours = result.data.neighbours.geonames;
+			var restCountry = result.data.restCountry;
+			// var exData = result.data.exData;
+			var currencyCode = restCountry.currencies[0].code;
+			var covid = result.data.covid.data;
 
-			// console.log(currCountry);
-			// console.log(cInfo);
+			
+
+			// console.log(covid);
+			
 
 			if (result.status.name == "ok") {
 
@@ -180,15 +172,27 @@ $('select').change(function() {
 				});
 
 				$("#countryName").html(cInfo.countryName);
-				$("#capName").html(cInfo.capital);
-				$("#pop").html(cInfo.population);
-				$("#area").html(cInfo.areaInSqKm);
-				$("#lang").html(cInfo.languages);
+				$("#capName1").html(cInfo.capital);
+				$("#capName2").html(cInfo.capital);
+				$("#pop").html(cInfo.population).digits();
+				$("#area").html(cInfo.areaInSqKm).digits();
+				$("#lang").html("");
+				restCountry.languages.forEach(element => {
+					$("#lang").append('<li>' + element.name + '</li>');
+				});
 				$("#continent").html(cInfo.continentName);
+				// $("#exRate").html('1 USD is ' + exData[currencyCode] + ' ' + currencyCode);
+				$("#flag").attr({src: restCountry.flag});
 				$("#neigh").html("");
 				neighbours.forEach(element => {
 					$("#neigh").append('<li>' + element.countryName + '</li>');
 				});
+				$("#cases").html(covid.today.confirmed);
+				$("#deaths").html(covid.today.deaths);
+				$("#allCases").html(covid.latest_data.confirmed);
+				$("#allDeaths").html(covid.latest_data.deaths);
+				$("#allRecovered").html(covid.latest_data.recovered);
+				$("#casesPerMill").html(covid.latest_data.calculated.cases_per_million_population);
 
 				const spaceSwap = / /gi;
 				var capStr = cInfo.capital.replace(spaceSwap, '%20') + '%20' + cInfo.countryName.replace(spaceSwap, '%20');
@@ -257,16 +261,42 @@ function moreCapData(coord1, coord2) {
 		success: function(result) {
 
 			var capitalWeather = result.data.weather;
+			var UVData = result.data.UVData;
+			UVData = Number(UVData);
+			var UVLevel;
+			var UVColor;
+			if (UVData < 3) {
+				UVLevel = "Low";
+				UVColor = "#558B2F";
+			} else if (UVData < 6) {
+				UVLevel = "Moderate";
+				UVColor = "#F9A825";
+			} else if (UVData < 8) {
+				UVLevel = "High";
+				UVColor = "#EF6C00";
+			} else if (UVData < 11) {
+				UVLevel = "Very High";
+				UVColor = "#B71C1";
+			} else {
+				UVLevel = "Extreme";
+				UVColor = "#6A1B9A";
+			}
 
-			// console.log(coord1);
-			// console.log(coord2);
+			// console.log(UVLevel);
+			// console.log(UVColor);
 			// console.log(capitalWeather);
 
 			$("#capWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png'});
-			$("#capWeather").html("");
+			$("#capWeather").html('');
+			$("#capWeather").append(capitalWeather.weather[0].description + '<br>').css({textTransform: 'capitalize'});
 			$("#capWeather").append('Max temp: ' + (capitalWeather.main.temp_max - 273.15).toFixed(1) + ' &#176;C<br>');
 			$("#capWeather").append('Min temp: ' + (capitalWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
 			$("#capWeather").append('Feels like: ' + (capitalWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#capWeather").append('Humidity: ' + (capitalWeather.main.humidity) + ' %<br>');
+			$("#capWeather").append('Wind Speed: ' + (capitalWeather.wind.speed * 3600 / 1000) + ' km/h<br>');
+			$("#capUV").html(UVLevel + ' ' + UVData + ' ');
+			$('#UVBox').css({backgroundColor: UVColor});
+			
 
 			
 		},
