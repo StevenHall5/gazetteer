@@ -8,13 +8,12 @@ var coord2 = 0;
 var map = L.map( 'mapid');
 map.locate({setView: true, maxZoom: 5});
 
-L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
-	maxZoom: 20,
-	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-
-
+//easyButtons
 var weatherButton = L.easyButton('<img src="libs/images/weather.svg">', function(){
 	$('#weatherModal').modal('show');
 }).addTo(map);
@@ -139,11 +138,6 @@ $('select').change(function() {
 			var currencyCode = restCountry.currencies[0].code;
 			var covid = result.data.covid.data;
 
-			
-
-			// console.log(covid);
-			
-
 			if (result.status.name == "ok") {
 
 				cBorders.forEach(element => {
@@ -183,20 +177,39 @@ $('select').change(function() {
 				$("#continent").html(cInfo.continentName);
 				// $("#exRate").html('1 USD is ' + exData[currencyCode] + ' ' + currencyCode);
 				$("#flag").attr({src: restCountry.flag});
-				$("#neigh").html("");
-				neighbours.forEach(element => {
-					$("#neigh").append('<li>' + element.countryName + '</li>');
-				});
+				if (neighbours.length === 0) {
+					$("#neigh").html("None");
+				} else {
+					$("#neigh").html("");
+					neighbours.forEach(element => {
+						$("#neigh").append('<li>' + element.countryName + '</li>');
+					});
+				}				
 				$("#cases").html(covid.today.confirmed);
 				$("#deaths").html(covid.today.deaths);
-				$("#allCases").html(covid.latest_data.confirmed);
-				$("#allDeaths").html(covid.latest_data.deaths);
-				$("#allRecovered").html(covid.latest_data.recovered);
-				$("#casesPerMill").html(covid.latest_data.calculated.cases_per_million_population);
+				if (covid.latest_data.confirmed === 0) {
+					$("#allCases").html("N/A")
+				} else {
+					$("#allCases").html(covid.latest_data.confirmed);
+				}
+				if (covid.latest_data.deaths === 0) {
+					$("#allDeaths").html("N/A")
+				} else {
+					$("#allDeaths").html(covid.latest_data.deaths);
+				}
+				if (covid.latest_data.recovered === 0) {
+					$("#allRecovered").html("N/A")
+				} else {
+					$("#allRecovered").html(covid.latest_data.recovered);
+				}
+				if (covid.latest_data.calculated.cases_per_million_population === 0) {
+					$("#casesPerMill").html("N/A")
+				} else {
+					$("#casesPerMill").html(covid.latest_data.calculated.cases_per_million_population);
+				}
 
 				const spaceSwap = / /gi;
 				var capStr = cInfo.capital.replace(spaceSwap, '%20') + '%20' + cInfo.countryName.replace(spaceSwap, '%20');
-				// console.log(capStr);
 				capData(capStr);		
 
 			}
@@ -226,11 +239,8 @@ function capData(str) {
 
 			var capInfo = result.data.cap.results[0];
 
-			// console.log(str);
-			// console.log(capInfo);
-
-			$("#capLat").html(capInfo.geometry.lat);
-			$("#capLong").html(capInfo.geometry.lng);
+			$("#capLat").html(capInfo.geometry.lat.toFixed(4));
+			$("#capLong").html(capInfo.geometry.lng.toFixed(4));
 			$("#call").html(capInfo.annotations.callingcode);
 			$("#currency").html(capInfo.annotations.currency.name + ' ' + capInfo.annotations.currency.symbol);
 			$("#drive").html(capInfo.annotations.roadinfo.drive_on);
@@ -261,7 +271,9 @@ function moreCapData(coord1, coord2) {
 		success: function(result) {
 
 			var capitalWeather = result.data.weather;
-			var UVData = result.data.UVData;
+			var UVData = result.data.UVAndForecastData.current.uvi;
+			var windSpeed = capitalWeather.wind.speed * 3600 / 1000;
+			var forecast = result.data.UVAndForecastData.daily;
 			UVData = Number(UVData);
 			var UVLevel;
 			var UVColor;
@@ -276,15 +288,11 @@ function moreCapData(coord1, coord2) {
 				UVColor = "#EF6C00";
 			} else if (UVData < 11) {
 				UVLevel = "Very High";
-				UVColor = "#B71C1";
+				UVColor = "#B71C1C";
 			} else {
 				UVLevel = "Extreme";
 				UVColor = "#6A1B9A";
 			}
-
-			// console.log(UVLevel);
-			// console.log(UVColor);
-			// console.log(capitalWeather);
 
 			$("#capWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png'});
 			$("#capWeather").html('');
@@ -293,11 +301,19 @@ function moreCapData(coord1, coord2) {
 			$("#capWeather").append('Min temp: ' + (capitalWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
 			$("#capWeather").append('Feels like: ' + (capitalWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
 			$("#capWeather").append('Humidity: ' + (capitalWeather.main.humidity) + ' %<br>');
-			$("#capWeather").append('Wind Speed: ' + (capitalWeather.wind.speed * 3600 / 1000) + ' km/h<br>');
+			$("#capWeather").append('Wind Speed: ' + windSpeed.toFixed(1) + ' km/h<br>');
 			$("#capUV").html(UVLevel + ' ' + UVData + ' ');
 			$('#UVBox').css({backgroundColor: UVColor});
-			
+			$("#forecastRow1").html('<br>');
+			$("#forecastRow2").html('<br>');
 
+			for (let i = 1; i <=5; i++) {
+				$("#forecastRow1").append('<td><img src="http://openweathermap.org/img/wn/' + forecast[i].weather[0].icon + '.png"></td>');
+			}
+
+			for (let i = 1; i <=5; i++) {
+				$("#forecastRow2").append('<td>' + new Date(forecast[i].dt*1000).toString().slice(0, 3) + '</td>');
+			}
 			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {

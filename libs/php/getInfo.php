@@ -130,7 +130,7 @@
 
     //eighth API: Openweathermap UV data
 
-    $url='https://api.openweathermap.org/data/2.5/onecall?lat=' . $_REQUEST['coord1'] . '&lon=' . $_REQUEST['coord2'] . '&exclude=minutely,hourly,daily,alerts&appid=ffaafdda5ec4e11d960fa30a9bb680ab';
+    $url='https://api.openweathermap.org/data/2.5/onecall?lat=' . $_REQUEST['coord1'] . '&lon=' . $_REQUEST['coord2'] . '&exclude=minutely,hourly,alerts&appid=ffaafdda5ec4e11d960fa30a9bb680ab';
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -141,7 +141,7 @@
  
     curl_close($ch); 
  
-    $UVData = json_decode($result,true);
+    $UVAndForecastData = json_decode($result,true);
  
     //end of API8
 
@@ -175,7 +175,7 @@
     $output['data']['neighbours'] = $neighbours;
     $output['data']['cap'] = $capital;
     $output['data']['weather'] = $weather;
-    $output['data']['UVData'] = $UVData['current']['uvi'];
+    $output['data']['UVAndForecastData'] = $UVAndForecastData;
     $output['data']['restCountry'] = $restCountry;
     // $output['data']['exData'] = $exData['rates'];
     $output['data']['borders'] = $country;
