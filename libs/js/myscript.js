@@ -2,6 +2,10 @@ var currCountry = null;
 var capital = null;
 var coord1 = 0;
 var coord2 = 0;
+var north = 0;
+var south = 0;
+var east = 0;
+var west = 0;
 
 // initialise map
 
@@ -27,6 +31,7 @@ L.easyButton('<img src="libs/images/virus.png" width="100%">', function(){
 }).addTo(map);
 
 var borderLayer;		//Establish map layer for borders
+var marks;
 
 $.fn.digits = function(){ 
     return this.each(function(){ 
@@ -37,8 +42,6 @@ $.fn.digits = function(){
 // Ajax
 
 function popList() {
-	
-	// $('#myModal').modal('show');
 
 	$.ajax({
 		url: "libs/php/popList.php",
@@ -104,7 +107,7 @@ function getLocation() {
 					
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				console.log("getLocation error");
+				console.log(jqXHR);
 			}
 		}); 		
 		
@@ -125,7 +128,11 @@ $('select').change(function() {
 			country: currCountry,
 			capital: capital,
 			coord1: coord1,
-			coord2: coord2
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west
 		},
 
 		success: function(result) {
@@ -210,7 +217,14 @@ $('select').change(function() {
 
 				const spaceSwap = / /gi;
 				var capStr = cInfo.capital.replace(spaceSwap, '%20') + '%20' + cInfo.countryName.replace(spaceSwap, '%20');
-				capData(capStr);		
+				capData(capStr);
+				
+				north = cInfo.north;
+				south = cInfo.south;
+				east = cInfo.east;
+				west = cInfo.west;
+				
+				earthquake(north, south, east, west);	
 
 			}
 		
@@ -232,7 +246,11 @@ function capData(str) {
 			country: currCountry,
 			capital: str,
 			coord1: coord1,
-			coord2: coord2
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west
 		},
 
 		success: function(result) {
@@ -265,7 +283,11 @@ function moreCapData(coord1, coord2) {
 			country: currCountry,
 			capital: capital,
 			coord1: coord1,
-			coord2: coord2
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west
 		},
 
 		success: function(result) {
@@ -323,10 +345,46 @@ function moreCapData(coord1, coord2) {
 
 };
 
+function earthquake(n, s, e, w) {	
 
+	north = n;
+	south = s;
+	east = e;
+	west = w;
 
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west
+		},
 
+		success: function(result) {
 
+			var eQ = result.data.earthquake.earthquakes;
+
+			var markers = L.markerClusterGroup();
+			eQ.forEach(element => {
+				markers.addLayer(L.marker([element.lat, element.lng]).bindPopup('Lat: ' + element.lat.toString() + '<br> Longitude: ' + element.lng.toString() + '<br> Magnitude: ' + element.magnitude.toString() + '<br> Date: ' + element.datetime.toString()));
+			});
+			borderLayer.addLayer(markers);
+			console.log(markers);
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("capData error");
+		}
+	}); 
+
+};
 
 
 
