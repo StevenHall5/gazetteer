@@ -113,18 +113,18 @@
 
     //seventh API: OpenExchangeRates Exchange data
 
-    // $url='https://openexchangerates.org/api/latest.json?app_id=d1a8e86f1e9348d691cdbe1294e7cba6';
+    $url='https://openexchangerates.org/api/latest.json?app_id=d1a8e86f1e9348d691cdbe1294e7cba6';
 
-    // $ch = curl_init();
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_URL,$url); 
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url); 
  
-    // $result=curl_exec($ch);
+    $result=curl_exec($ch);
  
-    // curl_close($ch); 
+    curl_close($ch); 
  
-    // $exData = json_decode($result,true);
+    $exData = json_decode($result,true);
  
     //end of API7
 
@@ -196,7 +196,7 @@
     $output['data']['UVAndForecastData'] = $UVAndForecastData;
     $output['data']['restCountry'] = $restCountry;
     $output['data']['earthquake'] = $earthquake;
-    // $output['data']['exData'] = $exData['rates'];
+    $output['data']['exData'] = $exData['rates'];
     $output['data']['borders'] = $country;
     $output['data']['covid'] = $covid;
     

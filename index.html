@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="libs/css/bootstrap.min.css">
         <link rel="stylesheet" href="libs/css/bootstrap.css.map">
         <link rel="stylesheet" href="libs/css/mystyles.css">
+        <link rel="stylesheet" href="libs/dist/css/leaflet.extra-markers.min.css">
+        <link rel="stylesheet" href="libs/FA/css/all.css">
         <link rel="stylesheet" href="libs/css/leaflet.css">
         <link rel="stylesheet" href="libs/css/MarkerCluster.css">
         <link rel="stylesheet" href="libs/css/MarkerCluster.Default.css">
@@ -45,21 +47,67 @@
                         </div>
 
                         <div class="modal-body">
-                            <img id="capWeatherImg" src="">                                                       
-                            <span id="capWeather"></span>
-                            <p>Forecast: </p>
+
                             <table>
-                                <tr id="forecastRow1"></tr>
-                                <tr id="forecastRow2"></tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-cloud-sun-rain"></i></td>
+                                    <td><span id="capWeather"></span></td>
+                                    <td class="right"><img id="capWeatherImg" src=""></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-temperature-high"></i></td>
+                                    <td>Max temp:</td>
+                                    <td class="right"><span id="maxTemp"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-temperature-low"></i></td>
+                                    <td>Min temp:</td>
+                                    <td class="right"><span id="minTemp"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-thermometer"></i></td>
+                                    <td>Feel Like:</td>
+                                    <td class="right"><span id="feels"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-grin-beam-sweat"></i></td>
+                                    <td>Humidity:</td>
+                                    <td class="right"><span id="humid"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-wind"></i></td>
+                                    <td>Wind Speed:</td>
+                                    <td class="right"><span id="wind"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-cloud-sun-rain"></i></td>
+                                    <td>Forecast:</td>
+                                    <td class="right" id="fore">
+                                        
+                                        <table>
+                                            <tr id="forecastRow1">
+                                            </tr>
+                                            <tr id="forecastRow2">
+                                                
+                                            </tr>
+                                        </table>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-sun"></i></td>
+                                    <td>UV Index:</td>
+                                    <td class="right"><span id="capUV"></span> <div id="UVBox"></div></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-map-marker-alt"></i></td>
+                                    <td>Location:</td>
+                                    <td class="right"><span id="capLat"></span>, <span id="capLong"></span></td>
+                                </tr>
                             </table>
-                            <br>
-                            <p id="UVPara">UV index: <span id="capUV"></span> <div id="UVBox"></div></p>
-                            <p>Location: <span id="capLat"></span>, <span id="capLong"></span></p>                       
+
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -71,32 +119,72 @@
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <h5 class="modal-title" id="countryName">Country name</h5>
+                            <img id="flag" src="https://restcountries.eu/data/gbr.svg">
+                            <h5 class="modal-title" id="countryName"></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
 
+                        
                         <div class="modal-body">
-                            <img id="flag" src="https://restcountries.eu/data/gbr.svg"> 
-                            <p>Capital: <span id="capName2"></span></p>                            
-                            <p>Population: <span id="pop"></span></p>
-                            <p>Area in km<sup>2</sup>: <span id="area"></span></p>
-                            <p>Continent: <span id="continent"></span></p>
-                            <p>Currency: <span id="currency"></span></p>
-                            <p>Exchange rate: <span id="exRate"></span></p>
-                            <p>Driving side: <span id="drive"></span></p>
-                            <!-- <p>Wiki link: <span id="wiki"></span></p> -->
-                            <!-- <p>Largest earthquake: <span id="earthQ"></span></p> -->
-                            <p>Language(s): <ul id="lang"></ul></p>
-                            <p>Calling code: <span id="call"></span></p>
-                            <!-- <p>Religion(s): <span id="relig"></span></p> -->
-                            <p>Neighbouring countries: <ul id="neigh"></ul></p>                          
+                            
+                            <table>
+                                <tr>
+                                    <td class="left"><i class="fas fa-map-marker"></i></td>
+                                    <td>Capital:</td>
+                                    <td class="right"><span id="capName2"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-users"></i></td>
+                                    <td>Population:</td>
+                                    <td class="right"><span id="pop"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-map"></i></td>
+                                    <td>Area in km<sup>2</sup>:</td>
+                                    <td class="right"><span id="area"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-globe-europe"></i></td>
+                                    <td>Continent:</td>
+                                    <td class="right"><span id="continent"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-dollar-sign"></i></td>
+                                    <td>Currency:</td>
+                                    <td class="right"><span id="currency"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-money-bill-wave"></i></td>
+                                    <td>Exchange rate:</td>
+                                    <td class="right"><span id="exRate"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-car"></i></td>
+                                    <td>Driving side:</td>
+                                    <td class="right"><span id="drive"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-language"></i></td>
+                                    <td>Language(s):</td>
+                                    <td class="right"><span id="lang"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-phone"></i></td>
+                                    <td>Calling code:</td>
+                                    <td class="right"><span id="call"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-flag"></i></td>
+                                    <td>Neighbouring countries:</td>
+                                    <td class="right"><span id="neigh"></span></td>
+                                </tr>
+                            </table> 
+
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -114,18 +202,42 @@
                         </div>
 
                         <div class="modal-body">
-                                                        
-                            <p>Today's Cases: <span id="cases"></span></p>
-                            <p>Today's Deaths: <span id="deaths"></span></p>
-                            <p>Total Cases: <span id="allCases"></span></p>
-                            <p>Total Deaths: <span id="allDeaths"></span></p>
-                            <p>Total Recovered: <span id="allRecovered"></span></p>
-                            <p>Cases per Million: <span id="casesPerMill"></span></p>                                                    
-                        </div>
+                            
+                            <table>
+                                <tr>
+                                    <td class="left"><i class="fas fa-lungs-virus"></i></td>
+                                    <td>Today's Cases:</td>
+                                    <td class="right"><span id="cases"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-skull-crossbones"></i></td>
+                                    <td>Today's Deaths:</td>
+                                    <td class="right"><span id="deaths"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-lungs-virus"></i></td>
+                                    <td>Total Cases:</td>
+                                    <td class="right"><span id="allCases"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-skull-crossbones"></i></td>
+                                    <td>Total Deaths:</td>
+                                    <td class="right"><span id="allDeaths"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-heartbeat"></i></td>
+                                    <td>Total Recovered:</td>
+                                    <td class="right"><span id="allRecovered"></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><i class="fas fa-calculator"></i></td>
+                                    <td>Cases per Million:</td>
+                                    <td class="right"><span id="casesPerMill"></span></td>
+                                </tr>
+                            </table>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                        </div> 
+
                     </div>
                 </div>
             </div>
@@ -153,6 +265,8 @@
         <script src="libs/js/leaflet.js"></script>
         <script src="libs/js/leaflet.markercluster.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+        <script src="libs/dist/js/leaflet.extra-markers.min.js"></script>
+        <script src="libs/FA/js/all.js"></script>
         <script src="libs/js/jquery-3.5.1.min.js"></script>
         <script src="libs/js/bootstrap.js"></script>
         <script src="libs/js/myscript.js"></script>

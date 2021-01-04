@@ -1,4 +1,4 @@
-body {
+body, table, div{
     padding: 0;
     margin: 0;
 }
@@ -37,65 +37,52 @@ main {
     z-index: 1;
 }
 
-#info {
-    display:none;
-    position: absolute;
-    background-color: white;
-    height: auto;
-    width: 30%;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
-    top: 10%;
-    z-index: 2;
-    right: 1%;
-    padding: 1%;
-    max-height: 80%;
-    overflow: scroll;
+.modal-body {
+    padding: 0;
+    margin: 0;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-#info::-webkit-scrollbar {
+.modal-body::-webkit-scrollbar {
     display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-#info {
+.modal-body {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
 
-
-.toggleBtn {
-    width: 16px;
-    height:16px;
-}
-
-#cityData, #countryData {
-    display:none;
-}
-
-#weath {
-    border: 10px solid black;
-}
-
 .leaflet-bar button {
     display : inline-flex !important;
+    flex-direction: column;
+    justify-content: center;
     height: 50px !important;
     width: 50px !important;
-    border-radius: 50% !important;
-    padding-top: 5px !important;
+    border-radius: 50% !important;    
+}
+
+.fa-virus {
+    color: green;
+}
+
+.fa-cloud-sun {
+    color: red;
+}
+
+.fa-info-circle {
+    color: blue;
 }
 
 div.leaflet-bar.easy-button-container.leaflet-control {
-    border: 0px;   
+    border: 0px;
+    margin-top: 15px;  
 }
 
 #flag {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 20%;
+    width: 15%;
     height: auto;
+    padding-right: 20px;
 }
 
 #UVBox {
@@ -103,7 +90,6 @@ div.leaflet-bar.easy-button-container.leaflet-control {
     width: 15px;
     height: 15px;
     border: 1px solid black;
-    
 }
 
 #UVPara {
@@ -114,7 +100,73 @@ div.leaflet-bar.easy-button-container.leaflet-control {
     text-align: center;
 }
 
+svg.svg-inline--fa.fa-cloud-sun.fa-w-20, svg.svg-inline--fa.fa-info-circle.fa-w-16, svg.svg-inline--fa.fa-virus.fa-w-16 {
+    width: 100%;
+    height:100%;
+}
 
+#weatherModal .modal-header {
+    background-color: red;
+    color: white;
+}
+
+#countryModal .modal-header {
+    background-color: blue;
+    color: white;
+}
+
+#covidModal .modal-header {
+    background-color: green;
+    color: white;
+}
+
+table, tr {
+    width: 100%;
+}
+
+td {
+    padding: 20px;
+}
+
+tr:nth-child(even) {background: #EEE}
+tr:nth-child(odd) {background: #FFF}
+
+.right {
+    text-align: right;
+    width: 50%;
+}
+
+.left {
+    width: 10%;
+}
+
+#fore {
+    padding: 0px;
+}
+
+.fa-skull-crossbones, .fa-lungs-virus, .fa-heartbeat, .fa-calculator {
+    width: 300% !important;
+    height: auto;
+    color: green; 
+}
+
+.fa-map-marker, .fa-users, .fa-map, .fa-globe-europe, .fa-dollar-sign, .fa-money-bill-wave, .fa-car, .fa-language, .fa-phone, .fa-flag {
+    width: 300% !important;
+    height: auto;
+    color: blue; 
+}
+
+.fa-map-marker-alt, .fa-cloud-sun-rain, .fa-temperature-high, .fa-temperature-low, .fa-thermometer, .fa-grin-beam-sweat, .fa-wind, .fa-sun {
+    width: 300% !important;
+    height: auto;
+    color: red; 
+}
+
+.smallCell {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
 
 
 

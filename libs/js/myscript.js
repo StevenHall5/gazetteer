@@ -18,26 +18,35 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 //easyButtons
-var weatherButton = L.easyButton('<img src="libs/images/weather.svg">', function(){
+L.easyButton('fa-cloud-sun', function(){
 	$('#weatherModal').modal('show');
 }).addTo(map);
 
-L.easyButton('<img src="libs/images/info.png" width="100%">', function(){
+L.easyButton('fa-info-circle', function(){
 	$('#countryModal').modal('show');
 }).addTo(map);
 
-L.easyButton('<img src="libs/images/virus.png" width="100%">', function(){
+L.easyButton('fa-virus', function(){
 	$('#covidModal').modal('show');
 }).addTo(map);
 
 var borderLayer;		//Establish map layer for borders
-var marks;
 
-$.fn.digits = function(){ 
+$.fn.digits = function(){ 	//adds commas into long numbers
     return this.each(function(){ 
         $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
     })
 }
+
+//Marker for earthquakes
+var eqMarker = L.ExtraMarkers.icon({
+	icon: 'fa-exclamation',
+	iconColor: 'white',
+	markerColor: 'orange-dark',
+	shape: 'square',
+	prefix: 'fa'
+  });
+
 
 // Ajax
 
@@ -82,7 +91,6 @@ function getLocation() {
 	function showPosition(position) {
 		var lat = position.coords.latitude;
 		var long = position.coords.longitude;
-		// console.log(position);
 
 		$.ajax({
 			url: "libs/php/getLocation.php",
@@ -141,7 +149,7 @@ $('select').change(function() {
 			var cInfo = result.data.countryInfo.geonames[0];
 			var neighbours = result.data.neighbours.geonames;
 			var restCountry = result.data.restCountry;
-			// var exData = result.data.exData;
+			var exData = result.data.exData;
 			var currencyCode = restCountry.currencies[0].code;
 			var covid = result.data.covid.data;
 
@@ -177,42 +185,46 @@ $('select').change(function() {
 				$("#capName2").html(cInfo.capital);
 				$("#pop").html(cInfo.population).digits();
 				$("#area").html(cInfo.areaInSqKm).digits();
-				$("#lang").html("");
+				
+				var langStr = "";
 				restCountry.languages.forEach(element => {
-					$("#lang").append('<li>' + element.name + '</li>');
+					langStr += element.name + ', ';
 				});
+				$("#lang").html(langStr.slice(0, -2));
+		
 				$("#continent").html(cInfo.continentName);
-				// $("#exRate").html('1 USD is ' + exData[currencyCode] + ' ' + currencyCode);
+				$("#exRate").html('1 USD is ' + exData[currencyCode] + ' ' + currencyCode);
 				$("#flag").attr({src: restCountry.flag});
 				if (neighbours.length === 0) {
 					$("#neigh").html("None");
 				} else {
-					$("#neigh").html("");
+					var neighStr = "";
 					neighbours.forEach(element => {
-						$("#neigh").append('<li>' + element.countryName + '</li>');
+						neighStr += element.name + ', ';
 					});
+					$("#neigh").html(neighStr.slice(0, -2));
 				}				
 				$("#cases").html(covid.today.confirmed);
 				$("#deaths").html(covid.today.deaths);
 				if (covid.latest_data.confirmed === 0) {
 					$("#allCases").html("N/A")
 				} else {
-					$("#allCases").html(covid.latest_data.confirmed);
+					$("#allCases").html(covid.latest_data.confirmed).digits();
 				}
 				if (covid.latest_data.deaths === 0) {
 					$("#allDeaths").html("N/A")
 				} else {
-					$("#allDeaths").html(covid.latest_data.deaths);
+					$("#allDeaths").html(covid.latest_data.deaths).digits();
 				}
 				if (covid.latest_data.recovered === 0) {
 					$("#allRecovered").html("N/A")
 				} else {
-					$("#allRecovered").html(covid.latest_data.recovered);
+					$("#allRecovered").html(covid.latest_data.recovered).digits();
 				}
 				if (covid.latest_data.calculated.cases_per_million_population === 0) {
 					$("#casesPerMill").html("N/A")
 				} else {
-					$("#casesPerMill").html(covid.latest_data.calculated.cases_per_million_population);
+					$("#casesPerMill").html(covid.latest_data.calculated.cases_per_million_population).digits();
 				}
 
 				const spaceSwap = / /gi;
@@ -317,25 +329,21 @@ function moreCapData(coord1, coord2) {
 			}
 
 			$("#capWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png'});
-			$("#capWeather").html('');
-			$("#capWeather").append(capitalWeather.weather[0].description + '<br>').css({textTransform: 'capitalize'});
-			$("#capWeather").append('Max temp: ' + (capitalWeather.main.temp_max - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#capWeather").append('Min temp: ' + (capitalWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#capWeather").append('Feels like: ' + (capitalWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#capWeather").append('Humidity: ' + (capitalWeather.main.humidity) + ' %<br>');
-			$("#capWeather").append('Wind Speed: ' + windSpeed.toFixed(1) + ' km/h<br>');
+			$("#capWeather").html(capitalWeather.weather[0].description).css({textTransform: 'capitalize'});
+			$("#maxTemp").html((capitalWeather.main.temp_max - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#minTemp").html((capitalWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#feels").html((capitalWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#humid").html((capitalWeather.main.humidity) + ' %<br>');
+			$("#wind").html(windSpeed.toFixed(1) + ' km/h<br>');
 			$("#capUV").html(UVLevel + ' ' + UVData + ' ');
 			$('#UVBox').css({backgroundColor: UVColor});
 			$("#forecastRow1").html('<br>');
 			$("#forecastRow2").html('<br>');
 
 			for (let i = 1; i <=5; i++) {
-				$("#forecastRow1").append('<td><img src="http://openweathermap.org/img/wn/' + forecast[i].weather[0].icon + '.png"></td>');
-			}
-
-			for (let i = 1; i <=5; i++) {
-				$("#forecastRow2").append('<td>' + new Date(forecast[i].dt*1000).toString().slice(0, 3) + '</td>');
-			}
+				$("#forecastRow1").append('<td class="smallCell"><img src="http://openweathermap.org/img/wn/' + forecast[i].weather[0].icon + '.png">');
+				$("#forecastRow2").append('<td class="smallCell">' + new Date(forecast[i].dt*1000).toString().slice(0, 3) + '</td>');
+			}	
 			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -373,10 +381,9 @@ function earthquake(n, s, e, w) {
 
 			var markers = L.markerClusterGroup();
 			eQ.forEach(element => {
-				markers.addLayer(L.marker([element.lat, element.lng]).bindPopup('Lat: ' + element.lat.toString() + '<br> Longitude: ' + element.lng.toString() + '<br> Magnitude: ' + element.magnitude.toString() + '<br> Date: ' + element.datetime.toString()));
+				markers.addLayer(L.marker([element.lat, element.lng], {icon: eqMarker}).bindPopup('Lat: ' + element.lat.toString() + '<br> Longitude: ' + element.lng.toString() + '<br> Magnitude: ' + element.magnitude.toString() + '<br> Date: ' + element.datetime.toString()));
 			});
 			borderLayer.addLayer(markers);
-			console.log(markers);
 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
