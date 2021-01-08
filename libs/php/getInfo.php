@@ -179,6 +179,40 @@
  
     //end of API10
 
+    //eleventh API: geonames city data
+
+    $url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&maxRows=10&featureClass=P&orderby=population&username=davidfish';
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url); 
+ 
+    $result=curl_exec($ch);
+ 
+    curl_close($ch); 
+ 
+    $city = json_decode($result,true);
+ 
+    //end of API11
+
+    //twelfth API: pixabay pics
+
+    $url='https://pixabay.com/api/?key=19790228-8504cc9c504fc1a55e52d1ac6&q=' . $_REQUEST['city'] . '&image_type=photo&orientation=horizontal&safesearch=true&per_page=3';
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url); 
+ 
+    $result=curl_exec($ch);
+ 
+    curl_close($ch); 
+ 
+    $pics = json_decode($result,true);
+ 
+    //end of API12
+
 
     
 
@@ -199,6 +233,8 @@
     $output['data']['exData'] = $exData['rates'];
     $output['data']['borders'] = $country;
     $output['data']['covid'] = $covid;
+    $output['data']['city'] = $city;
+    $output['data']['pics'] = $pics;
     
 
     header('Content-Type: application/json; charset=UTF-8');

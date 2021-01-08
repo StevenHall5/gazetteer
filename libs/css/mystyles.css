@@ -1,3 +1,9 @@
+@media (max-width: 576px) {
+    .left {
+        padding: 0px 0px 0px 5px !important;
+    }
+}
+
 body, table, div{
     padding: 0;
     margin: 0;
@@ -96,8 +102,10 @@ div.leaflet-bar.easy-button-container.leaflet-control {
     display: inline;
 }
 
-#forecastRow2 {
+#forecastRow2, #forecastRow1 {
     text-align: center;
+    width: 90%;
+    column-span: 3;
 }
 
 svg.svg-inline--fa.fa-cloud-sun.fa-w-20, svg.svg-inline--fa.fa-info-circle.fa-w-16, svg.svg-inline--fa.fa-virus.fa-w-16 {
@@ -122,10 +130,12 @@ svg.svg-inline--fa.fa-cloud-sun.fa-w-20, svg.svg-inline--fa.fa-info-circle.fa-w-
 
 table, tr {
     width: 100%;
+    /* border: 1px solid black; */
 }
 
 td {
     padding: 20px;
+    /* border: 1px solid black; */
 }
 
 tr:nth-child(even) {background: #EEE}
@@ -138,26 +148,23 @@ tr:nth-child(odd) {background: #FFF}
 
 .left {
     width: 10%;
-}
-
-#fore {
-    padding: 0px;
+    padding: 10px;
 }
 
 .fa-skull-crossbones, .fa-lungs-virus, .fa-heartbeat, .fa-calculator {
-    width: 300% !important;
+    width: 100% !important;
     height: auto;
     color: green; 
 }
 
 .fa-map-marker, .fa-users, .fa-map, .fa-globe-europe, .fa-dollar-sign, .fa-money-bill-wave, .fa-car, .fa-language, .fa-phone, .fa-flag {
-    width: 300% !important;
+    width: 100% !important;
     height: auto;
     color: blue; 
 }
 
 .fa-map-marker-alt, .fa-cloud-sun-rain, .fa-temperature-high, .fa-temperature-low, .fa-thermometer, .fa-grin-beam-sweat, .fa-wind, .fa-sun {
-    width: 300% !important;
+    width: 100% !important;
     height: auto;
     color: red; 
 }
@@ -166,6 +173,48 @@ tr:nth-child(odd) {background: #FFF}
     margin: 0;
     padding: 0;
     background-color: white;
+}
+
+.addBox {
+    display: inline-block;
+    width: 20%;
+    height: auto;
+}
+
+#eqTitle {
+    color: darkred !important;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    font-size: 1.5em;
+}
+
+.fa-thumbtack, .fa-chart-bar, .fa-clock, .fa-calendar-alt {
+    display: inline-block;
+    color: darkred;
+}
+
+.modalPicture {
+    width: 50%;
+    height: auto;
+}
+
+#picTableRow {
+    text-align: center;
+}
+
+#picBody, #weatherBody {
+    display: none !important;
+}
+
+#makeWhite {
+    background-color: white;
+}
+
+.lastRow {
+    background-color: black !important;
+    color: white;
+    font-size: 1.2em;
 }
 
 

@@ -29,90 +29,12 @@
         
         <header>
                 <div id="selection">
-                    <select id="countrySel"></select>                    
+                    <select class="form-control" id="countrySel"></select>                    
                 </div>
         </header>
 
         <main>
-            <!-- Weather Modal -->
-            <div class="modal" tabindex="-1" id="weatherModal">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="capName1"></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-                        <div class="modal-body">
-
-                            <table>
-                                <tr>
-                                    <td class="left"><i class="fas fa-cloud-sun-rain"></i></td>
-                                    <td><span id="capWeather"></span></td>
-                                    <td class="right"><img id="capWeatherImg" src=""></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-temperature-high"></i></td>
-                                    <td>Max temp:</td>
-                                    <td class="right"><span id="maxTemp"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-temperature-low"></i></td>
-                                    <td>Min temp:</td>
-                                    <td class="right"><span id="minTemp"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-thermometer"></i></td>
-                                    <td>Feel Like:</td>
-                                    <td class="right"><span id="feels"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-grin-beam-sweat"></i></td>
-                                    <td>Humidity:</td>
-                                    <td class="right"><span id="humid"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-wind"></i></td>
-                                    <td>Wind Speed:</td>
-                                    <td class="right"><span id="wind"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-cloud-sun-rain"></i></td>
-                                    <td>Forecast:</td>
-                                    <td class="right" id="fore">
-                                        
-                                        <table>
-                                            <tr id="forecastRow1">
-                                            </tr>
-                                            <tr id="forecastRow2">
-                                                
-                                            </tr>
-                                        </table>
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-sun"></i></td>
-                                    <td>UV Index:</td>
-                                    <td class="right"><span id="capUV"></span> <div id="UVBox"></div></td>
-                                </tr>
-                                <tr>
-                                    <td class="left"><i class="fas fa-map-marker-alt"></i></td>
-                                    <td>Location:</td>
-                                    <td class="right"><span id="capLat"></span>, <span id="capLong"></span></td>
-                                </tr>
-                            </table>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-
+           
             <!-- Country Modal -->
             <div class="modal" tabindex="-1" id="countryModal">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -126,7 +48,6 @@
                             </button>
                         </div>
 
-                        
                         <div class="modal-body">
                             
                             <table>
@@ -182,9 +103,7 @@
                                 </tr>
                             </table> 
 
-                        </div>
-
-                        
+                        </div>   
                     </div>
                 </div>
             </div>
@@ -237,7 +156,27 @@
                             </table>
 
                         </div> 
+                    </div>
+                </div>
+            </div>
 
+            <!-- City Modal -->
+            <div class="modal" tabindex="-1" id="cityModal">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cityTitle">Choose:</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <table id="cityTable"></table>
+   
+                        </div>                        
                     </div>
                 </div>
             </div>
