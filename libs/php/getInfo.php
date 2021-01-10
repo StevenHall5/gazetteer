@@ -198,7 +198,7 @@
 
     //twelfth API: pixabay pics
 
-    $url='https://pixabay.com/api/?key=19790228-8504cc9c504fc1a55e52d1ac6&q=' . $_REQUEST['city'] . '&image_type=photo&orientation=horizontal&safesearch=true&per_page=3';
+    $url='https://pixabay.com/api/?key=19790228-8504cc9c504fc1a55e52d1ac6&q=' . $_REQUEST['city'] . '&image_type=photo&orientation=horizontal&safesearch=true&per_page=5';
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -213,7 +213,22 @@
  
     //end of API12
 
+    //thirteenth API: API News
 
+    $url='https://newsapi.org/v2/everything?q=+' . $_REQUEST['city'] . '&apiKey=3b861698a00e4f9389c830084ebd0fe0&pageSize=5';
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url); 
+ 
+    $result=curl_exec($ch);
+ 
+    curl_close($ch); 
+ 
+    $news = json_decode($result,true);
+ 
+    //end of API13
     
 
     
@@ -235,6 +250,7 @@
     $output['data']['covid'] = $covid;
     $output['data']['city'] = $city;
     $output['data']['pics'] = $pics;
+    $output['data']['news'] = $news;
     
 
     header('Content-Type: application/json; charset=UTF-8');

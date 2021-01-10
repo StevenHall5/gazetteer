@@ -10,13 +10,34 @@ var city = null;
 
 // initialise map
 
-var map = L.map( 'mapid');
-map.locate({setView: true, maxZoom: 5});
+var borderLayer;		//Establish map layer for borders
+var cityMarkers = L.markerClusterGroup();
+var eQMarkers = L.markerClusterGroup();
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var regularMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+});
+
+var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+	maxZoom: 17,
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+var map = L.map('mapid', {layers: [regularMap]});
+map.locate({setView: true, maxZoom: 5});
+
+var baseMaps = {
+    "Standard": regularMap,
+    "Topographical": OpenTopoMap
+};
+
+var overlayMaps = {
+	"Cities": cityMarkers,
+	"Earthquakes": eQMarkers
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 L.easyButton('fa-info-circle', function(){
 	$('#countryModal').modal('show');
@@ -25,8 +46,6 @@ L.easyButton('fa-info-circle', function(){
 L.easyButton('fa-virus', function(){
 	$('#covidModal').modal('show');
 }).addTo(map);
-
-var borderLayer;		//Establish map layer for borders
 
 $.fn.digits = function(){ 	//adds commas into long numbers
     return this.each(function(){ 
@@ -41,23 +60,23 @@ function choice(element) {
 	//Menu Page
 	function cityStart() {
 		$('#cityModal').modal('show');
-		$('#cityTitle').html('Choose:');
+		$('#cityTitle').html('Choose for ' + element.name + ':');
 		$('.modal-header').css({backgroundColor: 'black', color: 'white'});
 		$('#cityTable').html('<tr></tr>');
 		$('#cityTable').append('<tr id="weatherRow">\
-								<td class="left"><i class="fas fa-calculator"></i></td>\
+								<td class="left"><i class="fas fa-cloud-sun"></i></td>\
 								<td><h2>Weather</h2></td>\
 								</tr>');
 		$('#cityTable').append('<tr id="newsRow">\
-								<td class="left"><i class="fas fa-calculator"></i></td>\
+								<td class="left"><i class="fas fa-newspaper"></i></td>\
 								<td><h2>News</h2></td>\
 								</tr>');
 		$('#cityTable').append('<tr id="picRow">\
-								<td class="left"><i class="fas fa-calculator"></i></td>\
+								<td class="left"><i class="fas fa-camera"></i></td>\
 								<td><h2>Pictures</h2></td>\
 								</tr>');
 		$('#cityTable').append('<tr id="wikiRow">\
-								<td class="left"><i class="fas fa-calculator"></i></td>\
+								<td class="left"><i class="fab fa-wikipedia-w"></i></td>\
 								<td><h2>Wikipedia</h2></td>\
 								</tr>');
 	}
@@ -66,82 +85,42 @@ function choice(element) {
 
 	$('#weatherRow').click(function() {
 		weather(element);
-		$('#cityTitle').html(element.name);
+		$('#cityTitle').html('Weather for ' + element.name);
 		$('.modal-header').css({backgroundColor: 'red', color: 'white'});
 		$('#cityTable').html('');
-		$('#cityTable').append('<tr>\
-								<td class="left"><i class="fas fa-cloud-sun-rain"></i></td>\
-								<td><span id="capWeather"></span></td>\
-								<td class="right"><img id="capWeatherImg" src=""></td>\
-								</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-temperature-high"></i></td>\
-		<td>Max temp:</td>\
-		<td class="right"><span id="maxTemp"></span></td>\
-	</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-temperature-low"></i></td>\
-		<td>Min temp:</td>\
-		<td class="right"><span id="minTemp"></span></td>\
-	</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-thermometer"></i></td>\
-		<td>Feel Like:</td>\
-		<td class="right"><span id="feels"></span></td>\
-	</tr>');
-		$('#cityTable').append('<tr>\
-			<td class="left"><i class="fas fa-grin-beam-sweat"></i></td>\
-			<td>Humidity:</td>\
-			<td class="right"><span id="humid"></span></td>\
-		</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-wind"></i></td>\
-		<td>Wind Speed:</td>\
-		<td class="right"><span id="wind"></span></td>\
-	</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-sun"></i></td>\
-		<td>UV Index:</td>\
-		<td class="right"><span id="capUV"></span> <div id="UVBox"></div></td>\
-	</tr>');
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-map-marker-alt"></i></td>\
-		<td>Location:</td>\
-		<td class="right"><span id="capLat"></span>, <span id="capLong"></span></td>\
-	</tr>');	
-		$('#cityTable').append('<tr>\
-		<td class="left"><i class="fas fa-cloud-sun-rain"></i></td>\
-		<td colspan="2">Forecast:</td>\
-	</tr>\
-	<tr id="makeWhite">\
-		<td class="left"></td>\
-		<td class="smallCell" id="forecastRow1" colspan="2"></td>\
-	</tr>\
-	<tr>\
-		<td class="left"></td>\
-		<td class="smallCell" id="forecastRow2" colspan="2"></td>\
-	</tr>\
-	<tr class="lastRow">\
-	<td class="left"></td>\
-	<td  id="backToMenu" class="right" colspan="2">Back to Menu</td>\
-</tr>');
-$('#backToMenu').click(function() {choice(element)});
+		
 	});
 	
-	
-	$('#newsRow').click(function() {console.log('news')});
-	$('#picRow').click(function() {console.log('pics')});
-	$('#wikiRow').click(function() {console.log('wiki')});
+	// News Page
+	$('#newsRow').click(function() {
+		news(element);
+		$('#cityTitle').html('Local news for ' + element.name);
+		$('.modal-header').css({backgroundColor: 'orange', color: 'black'});
+		$('#cityTable').html('');	
+	});
+
+	// Picture Page
+	$('#picRow').click(function() {
+		pictures(element);
+		$('#cityTitle').html('Pictures of ' + element.name);
+		$('.modal-header').css({backgroundColor: 'navy', color: 'white'});
+		$('#cityTable').html('');	
+	});
+
+	//Wiki Link
+	$('#wikiRow').click(function() {
+		const spaceSwap = / /gi;
+		var selectedCity = element.name.replace(spaceSwap, '%20') + '%2C%20' + element.countryName.replace(spaceSwap, '%20');
+
+		window.open('https://en.wikipedia.org/wiki/' + selectedCity, '_blank')
+	})
 
 }
 
-//Markers
-var eqMarker = L.ExtraMarkers.icon({
-	icon: 'fa-exclamation',
-	iconColor: 'white',
-	markerColor: 'orange-dark',
-	shape: 'square',
-	prefix: 'fa'
+var eqMarker = L.icon({
+	iconUrl: 'libs/images/earthquake.png',
+	iconSize: [40, 40]
+
 });
 
 var cityMarker = L.ExtraMarkers.icon({
@@ -152,47 +131,6 @@ var cityMarker = L.ExtraMarkers.icon({
 	prefix: 'fa'
 });
 
-var cityMarkers = L.markerClusterGroup();
-
-function pictures(element) {	
-
-	const spaceSwap = / /gi;
-	var selectedCity = element.name.replace(spaceSwap, '+') + '+' + element.countryName.replace(spaceSwap, '+');
-	console.log(selectedCity);
-
-	$.ajax({
-		url: "libs/php/getInfo.php",
-		type: 'POST',
-		dataType: 'json',
-		data: {
-			country: currCountry,
-			capital: capital,
-			coord1: coord1,
-			coord2: coord2,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
-			city: selectedCity
-		},
-
-		success: function(result) {
-
-			var pics = result.data.pics.hits;
-			$('#capName3').html(element.name);
-			$('#picTableRow').html("<tr></tr>");
-			pics.forEach(element => {
-				$('#picTableRow').append('<tr><td><img src="' + element.webformatURL + '" class="modalPicture"></td></tr>');
-				console.log(element);
-			});
-
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log("capData error");
-		}
-	}); 
-
-};
 
 
 // Ajax
@@ -301,7 +239,6 @@ $('select').change(function() {
 			var currencyCode = restCountry.currencies[0].code;
 			var covid = result.data.covid.data;
 			var city = result.data.city.geonames;
-			console.log(city);
 
 			if (result.status.name == "ok") {
 
@@ -311,6 +248,16 @@ $('select').change(function() {
 						//clear all borders
 						if (borderLayer !== undefined) {
 							borderLayer.clearLayers();
+						}
+
+						//clear all borders
+						if (eQMarkers !== undefined) {
+							eQMarkers.clearLayers();
+						}
+
+						//clear all borders
+						if (cityMarkers !== undefined) {
+							cityMarkers.clearLayers();
 						}
 						//attach borders
 						function styleOn() {
@@ -442,8 +389,6 @@ function capData(str) {
 };
 
 function weather(element) {	
-	
-	console.log(element);
 
 	$.ajax({
 		url: "libs/php/getInfo.php",
@@ -487,6 +432,64 @@ function weather(element) {
 				UVColor = "#6A1B9A";
 			}
 
+			$('#cityTable').append('<tr>\
+								<td class="left"><i class="fas fa-cloud-sun-rain"></i></td>\
+								<td><span id="capWeather"></span></td>\
+								<td class="right"><img id="capWeatherImg" src=""></td>\
+								</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-temperature-high"></i></td>\
+									<td>Max temp:</td>\
+									<td class="right"><span id="maxTemp"></span></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-temperature-low"></i></td>\
+									<td>Min temp:</td>\
+									<td class="right"><span id="minTemp"></span></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-thermometer"></i></td>\
+									<td>Feel Like:</td>\
+									<td class="right"><span id="feels"></span></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-grin-beam-sweat"></i></td>\
+									<td>Humidity:</td>\
+									<td class="right"><span id="humid"></span></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-wind"></i></td>\
+									<td>Wind Speed:</td>\
+									<td class="right"><span id="wind"></span></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-sun"></i></td>\
+									<td>UV Index:</td>\
+									<td class="right"><span id="capUV"></span> <div id="UVBox"></div></td>\
+									</tr>');
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-map-marker-alt"></i></td>\
+									<td>Location:</td>\
+									<td class="right"><span id="capLat"></span>, <span id="capLong"></span></td>\
+									</tr>');	
+			$('#cityTable').append('<tr>\
+									<td class="left"><i class="fas fa-cloud-sun-rain"></i></td>\
+									<td colspan="2">Forecast:</td>\
+									</tr>\
+									<tr id="makeWhite">\
+									<td class="left"></td>\
+									<td class="smallCell" id="forecastRow1" colspan="2"></td>\
+									</tr>\
+									<tr>\
+									<td class="left"></td>\
+									<td class="smallCell" id="forecastRow2" colspan="2"></td>\
+									</tr>\
+									<tr class="lastRow">\
+									<td class="left"></td>\
+									<td id="backToMenu" class="right" colspan="2">Back to Menu</td>\
+									</tr>');
+			$('#backToMenu').click(function() {choice(element)});
+
 			$("#capWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png'});
 			$("#capName1").html(element.name);
 			$("#capWeather").html(capitalWeather.weather[0].description).css({textTransform: 'capitalize'});
@@ -509,6 +512,92 @@ function weather(element) {
 											forecast[i].weather[0].main + '</td>');
 			}	
 			
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("capData error");
+		}
+	}); 
+
+};
+
+function news(element) {	
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west,
+			city: element.name
+		},
+
+		success: function(result) {
+
+			var news = result.data.news.articles;
+
+			news.forEach(element => {
+				
+				$('#cityTable').append('<tr>\
+				<td class="left"><i class="fas fa-pen"></i></td>\
+				<td><a href="' + element.url + '" target="_blank"><h4>' + element.title + '</h4><figure><img src="' + element.urlToImage + '" width="50%"><figcaption>' + element.source.name + ', ' + element.publishedAt.slice(0, 10) + '</figcaption></figure>\
+				<p>' + element.description + '</p></a></td>\
+				</tr>');
+
+			});
+			$('#cityTable').append('<tr class="lastRow">\
+								<td class="left"></td>\
+								<td  id="backToMenu" class="right" colspan="2">Back to Menu</td>\
+								</tr>');
+			$('#backToMenu').click(function() {choice(element)});
+	
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log("capData error");
+		}
+	}); 
+
+};
+
+function pictures(element) {	
+
+	const spaceSwap = / /gi;
+	var selectedCity = element.name.replace(spaceSwap, '+') + '+' + element.countryName.replace(spaceSwap, '+');
+
+	$.ajax({
+		url: "libs/php/getInfo.php",
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			country: currCountry,
+			capital: capital,
+			coord1: coord1,
+			coord2: coord2,
+			north: north,
+			south: south,
+			east: east,
+			west: west,
+			city: selectedCity
+		},
+
+		success: function(result) {
+
+			var pics = result.data.pics.hits;
+
+			pics.forEach(element => {
+				$('#cityTable').append('<tr><td><figure><img src="' + element.webformatURL + '" class="modalPicture"></figure></td></tr>');
+			});
+			$('#cityTable').append('<tr class="lastRow">\
+								<td id="backToMenu" class="right">Back to Menu</td>\
+								</tr>');
+			$('#backToMenu').click(function() {choice(element)});
+
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log("capData error");
@@ -544,7 +633,7 @@ function earthquake(n, s, e, w) {
 
 			var eQ = result.data.earthquake.earthquakes;
 
-			var eQMarkers = L.markerClusterGroup();
+			
 			eQ.forEach(element => {
 				var year = element.datetime.slice(0,4);
 				var month = element.datetime.slice(5,7);
