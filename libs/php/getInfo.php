@@ -181,7 +181,7 @@
 
     //eleventh API: geonames city data
 
-    $url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&maxRows=10&featureClass=P&orderby=population&username=davidfish';
+    $url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&maxRows=3&featureClass=P&orderby=population&username=davidfish';
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -229,6 +229,23 @@
     $news = json_decode($result,true);
  
     //end of API13
+
+    //fourteenth API: OpenTripMap Parks data
+
+    $url='https://api.opentripmap.com/0.1/en/places/bbox?lon_min=' . $_REQUEST['west'] . '&lat_min=' . $_REQUEST['south'] . '&lon_max=' . $_REQUEST['east'] . '&lat_max=' . $_REQUEST['north'] . '&kinds=national_parks&limit=20&apikey=5ae2e3f221c38a28845f05b6eab36615569b4c3842a96ab45cf511a8';
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL,$url); 
+ 
+    $result=curl_exec($ch);
+ 
+    curl_close($ch); 
+ 
+    $park = json_decode($result,true);
+ 
+    //end of API14
     
 
     
@@ -245,6 +262,7 @@
     $output['data']['UVAndForecastData'] = $UVAndForecastData;
     $output['data']['restCountry'] = $restCountry;
     $output['data']['earthquake'] = $earthquake;
+    $output['data']['park'] = $park;
     $output['data']['exData'] = $exData['rates'];
     $output['data']['borders'] = $country;
     $output['data']['covid'] = $covid;

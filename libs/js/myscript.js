@@ -8,11 +8,14 @@ var east = 0;
 var west = 0;
 var city = null;
 
-// initialise map
+//Establish map layers
 
-var borderLayer;		//Establish map layer for borders
+var borderLayer;
 var cityMarkers = L.markerClusterGroup();
 var eQMarkers = L.markerClusterGroup();
+var parkMarkers = L.markerClusterGroup();
+
+// initialise map
 
 var regularMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -34,7 +37,8 @@ var baseMaps = {
 
 var overlayMaps = {
 	"Cities": cityMarkers,
-	"Earthquakes": eQMarkers
+	"Earthquakes": eQMarkers,
+	"National Parks": parkMarkers
 };
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -117,10 +121,20 @@ function choice(element) {
 
 }
 
+//Marker styles
+
 var eqMarker = L.icon({
 	iconUrl: 'libs/images/earthquake.png',
 	iconSize: [40, 40]
 
+});
+
+var parkMarker = L.ExtraMarkers.icon({
+	icon: 'fa-leaf',
+	iconColor: 'white',
+	markerColor: 'green',
+	shape: 'circle',
+	prefix: 'fa'
 });
 
 var cityMarker = L.ExtraMarkers.icon({
@@ -130,8 +144,6 @@ var cityMarker = L.ExtraMarkers.icon({
 	shape: 'circle',
 	prefix: 'fa'
 });
-
-
 
 // Ajax
 
@@ -256,6 +268,11 @@ $('select').change(function() {
 						}
 
 						//clear all borders
+						if (parkMarkers !== undefined) {
+							parkMarkers.clearLayers();
+						}
+
+						//clear all borders
 						if (cityMarkers !== undefined) {
 							cityMarkers.clearLayers();
 						}
@@ -341,7 +358,7 @@ $('select').change(function() {
 				east = cInfo.east;
 				west = cInfo.west;
 				
-				earthquake(north, south, east, west);	
+				earthquakeAndParks(north, south, east, west);	
 
 			}
 		
@@ -606,7 +623,7 @@ function pictures(element) {
 
 };
 
-function earthquake(n, s, e, w) {	
+function earthquakeAndParks(n, s, e, w) {	
 
 	north = n;
 	south = s;
@@ -632,7 +649,7 @@ function earthquake(n, s, e, w) {
 		success: function(result) {
 
 			var eQ = result.data.earthquake.earthquakes;
-
+			var park = result.data.park.features;
 			
 			eQ.forEach(element => {
 				var year = element.datetime.slice(0,4);
@@ -643,6 +660,11 @@ function earthquake(n, s, e, w) {
 			
 			});
 			borderLayer.addLayer(eQMarkers);
+
+			park.forEach(element => {
+				parkMarkers.addLayer(L.marker([element.geometry.coordinates[1], element.geometry.coordinates[0]], {icon: parkMarker}).bindPopup('<h3 id="parkTitle">' + element.properties.name + '</h3><p><i class="fas fa-map-pin"></i> Lat, Long: ' + element.geometry.coordinates[1].toFixed(4).toString() + ', ' + element.geometry.coordinates[0].toFixed(4).toString()));
+			});
+			borderLayer.addLayer(parkMarkers);
 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {

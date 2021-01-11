@@ -206,6 +206,10 @@ tr:nth-child(odd) {background: #FFF}
     color: darkred;
 }
 
+.fa-map-pin, #parkTitle {
+    color: green;
+}
+
 .modalPicture {
     display: block;
     width: 70%;
