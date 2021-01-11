@@ -181,7 +181,7 @@
 
     //eleventh API: geonames city data
 
-    $url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&maxRows=3&featureClass=P&orderby=population&username=davidfish';
+    $url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&maxRows=10&featureClass=P&orderby=population&username=davidfish';
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
