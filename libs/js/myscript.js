@@ -1,11 +1,4 @@
 var currCountry = null;
-var capital = null;
-var coord1 = 0;
-var coord2 = 0;
-var north = 0;
-var south = 0;
-var east = 0;
-var west = 0;
 var city = null;
 
 //Establish map layers
@@ -57,69 +50,7 @@ $.fn.digits = function(){ 	//adds commas into long numbers
     })
 }
 
-function choice(element) {
 
-	cityStart(element);
-	
-	//Menu Page
-	function cityStart() {
-		$('#cityModal').modal('show');
-		$('#cityTitle').html('Choose for ' + element.name + ':');
-		$('.modal-header').css({backgroundColor: 'black', color: 'white'});
-		$('#cityTable').html('<tr></tr>');
-		$('#cityTable').append('<tr id="weatherRow">\
-								<td class="left"><i class="fas fa-cloud-sun"></i></td>\
-								<td><h2>Weather</h2></td>\
-								</tr>');
-		$('#cityTable').append('<tr id="newsRow">\
-								<td class="left"><i class="fas fa-newspaper"></i></td>\
-								<td><h2>News</h2></td>\
-								</tr>');
-		$('#cityTable').append('<tr id="picRow">\
-								<td class="left"><i class="fas fa-camera"></i></td>\
-								<td><h2>Pictures</h2></td>\
-								</tr>');
-		$('#cityTable').append('<tr id="wikiRow">\
-								<td class="left"><i class="fab fa-wikipedia-w"></i></td>\
-								<td><h2>Wikipedia</h2></td>\
-								</tr>');
-	}
-
-	//Weather Page
-
-	$('#weatherRow').click(function() {
-		weather(element);
-		$('#cityTitle').html('Weather for ' + element.name);
-		$('.modal-header').css({backgroundColor: 'red', color: 'white'});
-		$('#cityTable').html('');
-		
-	});
-	
-	// News Page
-	$('#newsRow').click(function() {
-		news(element);
-		$('#cityTitle').html('Local news for ' + element.name);
-		$('.modal-header').css({backgroundColor: 'orange', color: 'black'});
-		$('#cityTable').html('');	
-	});
-
-	// Picture Page
-	$('#picRow').click(function() {
-		pictures(element);
-		$('#cityTitle').html('Pictures of ' + element.name);
-		$('.modal-header').css({backgroundColor: 'navy', color: 'white'});
-		$('#cityTable').html('');	
-	});
-
-	//Wiki Link
-	$('#wikiRow').click(function() {
-		const spaceSwap = / /gi;
-		var selectedCity = element.name.replace(spaceSwap, '%20') + '%2C%20' + element.countryName.replace(spaceSwap, '%20');
-
-		window.open('https://en.wikipedia.org/wiki/' + selectedCity, '_blank')
-	})
-
-}
 
 //Marker styles
 
@@ -231,13 +162,6 @@ $('select').change(function() {
 		dataType: 'json',
 		data: {
 			country: currCountry,
-			capital: capital,
-			coord1: coord1,
-			coord2: coord2,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
 			city: city
 		},
 
@@ -294,6 +218,12 @@ $('select').change(function() {
 
 				});
 
+				var north = cInfo.north;
+				var south = cInfo.south;
+				var east = cInfo.east;
+				var west = cInfo.west;
+				
+				earthquakeAndParks(north, south, east, west);	
 				
 				city.forEach(element => {
 					cityMarkers.addLayer(L.marker([element.lat, element.lng], {icon: cityMarker}).on('click', function() {
@@ -352,13 +282,6 @@ $('select').change(function() {
 				const spaceSwap = / /gi;
 				var capStr = cInfo.capital.replace(spaceSwap, '%20') + '%20' + cInfo.countryName.replace(spaceSwap, '%20');
 				capData(capStr);
-				
-				north = cInfo.north;
-				south = cInfo.south;
-				east = cInfo.east;
-				west = cInfo.west;
-				
-				earthquakeAndParks(north, south, east, west);	
 
 			}
 		
@@ -373,19 +296,11 @@ $('select').change(function() {
 function capData(str) {	
 
 	$.ajax({
-		url: "libs/php/getInfo.php",
+		url: "libs/php/getCapital.php",
 		type: 'POST',
 		dataType: 'json',
 		data: {
-			country: currCountry,
-			capital: str,
-			coord1: coord1,
-			coord2: coord2,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
-			city: city
+			capital: str
 		},
 
 		success: function(result) {
@@ -395,7 +310,6 @@ function capData(str) {
 			$("#call").html(capInfo.annotations.callingcode);
 			$("#currency").html(capInfo.annotations.currency.name + ' ' + capInfo.annotations.currency.symbol);
 			$("#drive").html(capInfo.annotations.roadinfo.drive_on);
-			$("#capTZ").html(capInfo.annotations.timezone.name + ', ' + capInfo.annotations.timezone.offset_string);
 
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -405,29 +319,86 @@ function capData(str) {
 
 };
 
+function choice(element) {
+
+	cityStart(element);
+	
+	//Menu Page
+	function cityStart() {
+		$('#cityModal').modal('show');
+		$('#cityTitle').html('Choose for ' + element.name + ':');
+		$('.modal-header').css({backgroundColor: 'black', color: 'white'});
+		$('#cityTable').html('<tr></tr>');
+		$('#cityTable').append('<tr id="weatherRow">\
+								<td class="left"><i class="fas fa-cloud-sun"></i></td>\
+								<td><h2>Weather</h2></td>\
+								</tr>');
+		$('#cityTable').append('<tr id="newsRow">\
+								<td class="left"><i class="fas fa-newspaper"></i></td>\
+								<td><h2>News</h2></td>\
+								</tr>');
+		$('#cityTable').append('<tr id="picRow">\
+								<td class="left"><i class="fas fa-camera"></i></td>\
+								<td><h2>Pictures</h2></td>\
+								</tr>');
+		$('#cityTable').append('<tr id="wikiRow">\
+								<td class="left"><i class="fab fa-wikipedia-w"></i></td>\
+								<td><h2>Wikipedia</h2></td>\
+								</tr>');
+	}
+
+	//Weather Page
+
+	$('#weatherRow').click(function() {
+		weather(element);
+		$('#cityTitle').html('Weather for ' + element.name);
+		$('.modal-header').css({backgroundColor: 'red', color: 'white'});
+		$('#cityTable').html('');
+		
+	});
+	
+	// News Page
+	$('#newsRow').click(function() {
+		news(element);
+		$('#cityTitle').html('Local news for ' + element.name);
+		$('.modal-header').css({backgroundColor: 'orange', color: 'black'});
+		$('#cityTable').html('');	
+	});
+
+	// Picture Page
+	$('#picRow').click(function() {
+		pictures(element);
+		$('#cityTitle').html('Pictures of ' + element.name);
+		$('.modal-header').css({backgroundColor: 'navy', color: 'white'});
+		$('#cityTable').html('');	
+	});
+
+	//Wiki Link
+	$('#wikiRow').click(function() {
+		const spaceSwap = / /gi;
+		var selectedCity = element.name.replace(spaceSwap, '%20') + '%2C%20' + element.countryName.replace(spaceSwap, '%20');
+
+		window.open('https://en.wikipedia.org/wiki/' + selectedCity, '_blank')
+	})
+
+}
+
 function weather(element) {	
 
 	$.ajax({
-		url: "libs/php/getInfo.php",
+		url: "libs/php/getWeather.php",
 		type: 'POST',
 		dataType: 'json',
 		data: {
-			country: currCountry,
-			capital: capital,
 			coord1: element.lat,
-			coord2: element.lng,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
-			city: city
+			coord2: element.lng
 		},
 
 		success: function(result) {
 
-			var capitalWeather = result.data.weather;
+			var cityWeather = result.data.weather;
 			var UVData = result.data.UVAndForecastData.current.uvi;
-			var windSpeed = capitalWeather.wind.speed * 3600 / 1000;
+			var windSpeed = cityWeather.wind.speed * 3600 / 1000;
 			var forecast = result.data.UVAndForecastData.daily;
 			UVData = Number(UVData);
 			var UVLevel;
@@ -451,8 +422,8 @@ function weather(element) {
 
 			$('#cityTable').append('<tr>\
 								<td class="left"><i class="fas fa-cloud-sun-rain"></i></td>\
-								<td><span id="capWeather"></span></td>\
-								<td class="right"><img id="capWeatherImg" src=""></td>\
+								<td><span id="cityWeather"></span></td>\
+								<td class="right"><img id="cityWeatherImg" src=""></td>\
 								</tr>');
 			$('#cityTable').append('<tr>\
 									<td class="left"><i class="fas fa-temperature-high"></i></td>\
@@ -507,13 +478,13 @@ function weather(element) {
 									</tr>');
 			$('#backToMenu').click(function() {choice(element)});
 
-			$("#capWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + capitalWeather.weather[0].icon + '.png'});
+			$("#cityWeatherImg").attr({src: 'http://openweathermap.org/img/wn/' + cityWeather.weather[0].icon + '.png'});
 			$("#capName1").html(element.name);
-			$("#capWeather").html(capitalWeather.weather[0].description).css({textTransform: 'capitalize'});
-			$("#maxTemp").html((capitalWeather.main.temp_max - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#minTemp").html((capitalWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#feels").html((capitalWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
-			$("#humid").html((capitalWeather.main.humidity) + ' %<br>');
+			$("#cityWeather").html(cityWeather.weather[0].description).css({textTransform: 'capitalize'});
+			$("#maxTemp").html((cityWeather.main.temp_max - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#minTemp").html((cityWeather.main.temp_min - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#feels").html((cityWeather.main.feels_like - 273.15).toFixed(1) + ' &#176;C<br>');
+			$("#humid").html((cityWeather.main.humidity) + ' %<br>');
 			$("#wind").html(windSpeed.toFixed(1) + ' km/h<br>');
 			$("#capUV").html(UVLevel + ' ' + UVData + ' ');
 			$('#UVBox').css({backgroundColor: UVColor});
@@ -540,18 +511,10 @@ function weather(element) {
 function news(element) {	
 
 	$.ajax({
-		url: "libs/php/getInfo.php",
+		url: "libs/php/getNews.php",
 		type: 'POST',
 		dataType: 'json',
 		data: {
-			country: currCountry,
-			capital: capital,
-			coord1: coord1,
-			coord2: coord2,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
 			city: element.name
 		},
 
@@ -588,18 +551,10 @@ function pictures(element) {
 	var selectedCity = element.name.replace(spaceSwap, '+') + '+' + element.countryName.replace(spaceSwap, '+');
 
 	$.ajax({
-		url: "libs/php/getInfo.php",
+		url: "libs/php/getPics.php",
 		type: 'POST',
 		dataType: 'json',
 		data: {
-			country: currCountry,
-			capital: capital,
-			coord1: coord1,
-			coord2: coord2,
-			north: north,
-			south: south,
-			east: east,
-			west: west,
 			city: selectedCity
 		},
 
@@ -631,19 +586,14 @@ function earthquakeAndParks(n, s, e, w) {
 	west = w;
 
 	$.ajax({
-		url: "libs/php/getInfo.php",
+		url: "libs/php/getEarthquakesAndParks.php",
 		type: 'POST',
 		dataType: 'json',
 		data: {
-			country: currCountry,
-			capital: capital,
-			coord1: coord1,
-			coord2: coord2,
 			north: north,
 			south: south,
 			east: east,
-			west: west,
-			city: city
+			west: west
 		},
 
 		success: function(result) {
